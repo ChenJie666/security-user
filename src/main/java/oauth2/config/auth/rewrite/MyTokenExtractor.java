@@ -62,7 +62,7 @@ public class MyTokenExtractor implements TokenExtractor {
      */
     protected String extractHeaderToken(HttpServletRequest request) {
         //1.首先看是否是火粉的token
-        String hifunToken = request.getHeader(AuthEnum.HIFUN.getCodeText());
+        String hifunToken = request.getHeader((String)AuthEnum.HIFUN.getCodeText());
         if (!Objects.isNull(hifunToken)) {
             return hifunToken;
         }

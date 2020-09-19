@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: TEST-USER-CENTER
+  datasource:
+    url: jdbc:mysql://116.62.148.11:3306/uaa_server?useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: abc123
 
 eureka:
   client:
@@ -29,3 +34,9 @@ management:
 feign:
   httpclient:
     connection-timeout: 2000
+
+jwt:
+  # 开发服公钥
+  publicKey: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3XOqdP2uE1CoQ4qPUnkoWOtVtN/zP3uMCz8U05qRJN541MknOspeJqVGiS/QTvuTkW9GGJDxhOOJO9v83VzuH27cIevZXnN4UmOxGTyaHbP8fEEnn6HITT9Uy8sfo89DMZdWqToUIe9B7bDnZ+9ZJeLE7z5EuyffBLW0vroa79ANCOrrFyDTrYVajSVL64ZtpV5VU0s52EZHOXgm/QNeFqrm3iO3CVJef+whWaUAO0FHV9sUoNXE96LF+LUHohkCajxeRtiDgu5lJDsPj6E7ws/nf7DpIQ5BqaxP3BSGw2AHpkgFWC/gv6w5gv1jnrMGS11+97hBeqy1z5ae0DZthwIDAQAB"
+  # 测试服公钥
+#  publicKey: "BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAljLH5wKlDGvWU/CfxX5LPxltPlbi/rLw9jFhlvUDODNUN2T0xOZ4lvqh1fObWueIHTGcKNsF2eAHdzuiDlVVZGS1gurBfX0N+y5p1pjUeoXM+plLM/qLvKZR65Dz4CHf8ZbbGImSfujHKcr9XTlD/+23CebKfH2hH7sFejVJSCEV6kG/CdrnIfzNGBSIfZ0VF2JrOXy5/+msztfnKLfE0k3X+t9b/s4j047seeD0BhK80yW2vmTtbUIOpmiQpay4CaEYH2BJg/7AhbQOfPS+877tAqmm7Czkgm4foWZb+q1pjOxIf8VAOG/6H4rl5jKyRNEw0XDNJ0fZCal5VXDKyQIDAQAB"

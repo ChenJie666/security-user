@@ -2,8 +2,8 @@ package oauth2.config.auth.rewrite;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.jwt.Jwt;
-import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.jwt.crypto.sign.*;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.util.JsonParser;
@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtClaimsSetVeri
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
+import java.security.PublicKey;
 import java.util.Map;
 
 /**
@@ -42,10 +44,13 @@ public class MyJwtAccessTokenConverter extends JwtAccessTokenConverter {
 
     private SignatureVerifier verifier;
 
+    @Resource
+    private PublicKey publicKey;
+
     @Override
     protected Map<String, Object> decode(String token) {
         try {
-            Jwt jwt = MyJwtHelper.decodeAndVerify(token, verifier);
+            Jwt jwt = MyJwtHelper.decodeAndVerify(token, verifier, publicKey);
             String claimsStr = jwt.getClaims();
             Map<String, Object> claims = objectMapper.parseMap(claimsStr);
             if (claims.containsKey(EXP) && claims.get(EXP) instanceof Integer) {
@@ -74,7 +79,7 @@ public class MyJwtAccessTokenConverter extends JwtAccessTokenConverter {
         }
         // Check the signing and verification keys match
         if (signer instanceof RsaSigner) {
-            byte[] test = "test".getBytes();
+            byte[] test = "src/test".getBytes();
             try {
                 verifier.verify(test, signer.sign(test));
                 logger.info("Signing and verification RSA keys match");
@@ -90,6 +95,14 @@ public class MyJwtAccessTokenConverter extends JwtAccessTokenConverter {
                     "For MAC signing you do not need to specify the verifier key separately, and if you do it must match the signing key");
         }
         this.verifier = verifier;
+    }
+
+    public void setVerifier(SignatureVerifier verifier) {
+        this.verifier = verifier;
+    }
+
+    public void setVerifierKey(String key) {
+        this.verifierKey = key;
     }
 
     private boolean isPublic(String key) {

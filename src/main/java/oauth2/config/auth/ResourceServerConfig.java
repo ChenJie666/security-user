@@ -46,25 +46,9 @@ public class ResourceServerConfig {
         public void configure(HttpSecurity http) throws Exception {
             http.authorizeRequests()
 //                    .antMatchers("/order/**").access("#oauth2.hasScope('ROLE_ADMIN')");
-                    .antMatchers("/user/**").hasAuthority("hifun");
+                    .antMatchers("/user/**").hasAnyAuthority("hifun")/*access("#oauth2.hasScope('ROLE_USER')")*/
+                    .antMatchers("/administrator/**").hasAnyAuthority("/users/");
         }
     }
-
-//    @Configuration
-//    @EnableResourceServer
-//    public class ApplicationServerConfig extends ResourceServerConfigurerAdapter {
-//        @Override
-//        public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-//            resources.resourceId(RESOURCE_ID)
-//                    .tokenStore(tokenStore)
-//                    .stateless(true);
-//        }
-//
-//        @Override
-//        public void configure(HttpSecurity http) throws Exception {
-//            http.authorizeRequests()
-//                    .antMatchers("/application/**").access("#oauth2.hasScope('ROLE_APPLICATION')");
-//        }
-//    }
 
 }
