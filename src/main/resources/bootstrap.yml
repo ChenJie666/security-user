@@ -1,0 +1,31 @@
+server:
+  port: 9600
+
+spring:
+  application:
+    name: TEST-USER-CENTER
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+#      defaultZone: http://172.16.237.6:8761/eureka   # 火粉eureka
+#      defaultZone: http://172.16.0.229:8761/eureka/
+      defaultZone: http://192.168.32.128:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health,info,env
+  endpoint:
+    health:
+      show-details: always
+
+feign:
+  httpclient:
+    connection-timeout: 2000
