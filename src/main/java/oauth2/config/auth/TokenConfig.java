@@ -41,8 +41,8 @@ public class TokenConfig {
      */
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
-//        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        JwtAccessTokenConverter converter = new MyJwtAccessTokenConverter();
+        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+//        JwtAccessTokenConverter converter = new MyJwtAccessTokenConverter();
 //        converter.setSigningKey(SIGNING_KEY);
 
         String publicKey = uaaClient.publicKey();
