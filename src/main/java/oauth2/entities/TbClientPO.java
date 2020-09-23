@@ -1,17 +1,17 @@
-package oauth2.entities.jpa;
+package oauth2.entities;
 
-import javax.persistence.*;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @Description:
  * @Author: CJ
- * @Data: 2020/7/23 15:02
+ * @Data: 2020/9/23 15:33
  */
-@Entity
-public class OauthClientDetails {
+@Data
+@Accessors(chain = true)
+public class TbClientPO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String clientId;
     private String resourceIds;
     private String clientSecret;
@@ -21,7 +21,6 @@ public class OauthClientDetails {
     private String authorities;
     private Integer accessTokenValidity;
     private Integer refreshTokenValidity;
-    @Column(length = 4096)
     private String additionalInformation;
     private String autoapprove;
 

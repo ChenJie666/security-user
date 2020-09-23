@@ -1,7 +1,7 @@
 package oauth2.controller;
 
 import oauth2.entities.TbUserPO;
-import oauth2.service.AdministratorService;
+import oauth2.service.FeignService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +19,7 @@ import java.util.List;
 public class FeignController {
 
     @Resource
-    private AdministratorService administratorService;
+    private FeignService administratorService;
 
     /**
      * 以下是认证中心远程调用用户中心的接口，不设权限，需要在gateway拦截这些请求路径。

@@ -1,22 +1,46 @@
 package oauth2.service;
 
+import oauth2.entities.SearchFactorVO;
 import oauth2.entities.TbUserPO;
 
 import java.util.List;
 
+/**
+ * @Description:
+ * @Author: CJ
+ * @Data: 2020/9/23 15:00
+ */
 public interface AdministratorService {
 
-    TbUserPO getInfoById(Integer id);
-
-
     /**
-     * 以下是认证中心远程调用的接口
+     * 查询所有用户信息
      * @return
      */
-    TbUserPO getTbUser(String username);
+    List<TbUserPO> findAllUsers();
 
-    List<String> getRoleCodes(String username);
+    /**
+     * 查询所有用户名
+     * @return
+     */
+    List<String> findAllUserNames();
 
-    List<String> getAuthorities(List<String> roleCodes);
+    /**
+     * 根据用户名查询用户
+     * @return
+     */
+    TbUserPO findUserByName(String username);
+
+    /**
+     * 根据用户id查询用户
+     * @return
+     */
+    TbUserPO findUserById(Integer id);
+
+    /**
+     * 获取筛选后的所有用户信息
+     * @param searchFactorVO
+     * @return
+     */
+    List<TbUserPO> findUsersByFactor(SearchFactorVO searchFactorVO);
 
 }

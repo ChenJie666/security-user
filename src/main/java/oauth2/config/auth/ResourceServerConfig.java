@@ -12,6 +12,11 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 
 import javax.annotation.Resource;
 
+/**
+ * @Description:
+ * @Author: CJ
+ * @Data: 2020/9/23 11:28
+ */
 @Configuration
 public class ResourceServerConfig {
 

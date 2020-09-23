@@ -3,6 +3,8 @@ package oauth2.entities;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 
 /**
  * @Description:
@@ -24,19 +26,19 @@ public class TbUserPO {
     /**
      * 账户没有过期
      */
-    boolean accountNonExpired = true;
+    private boolean accountNonExpired = true;
     /**
      * 账户没被锁定 （是否冻结）
      */
-    boolean accountNonLocked = true;
+    private boolean accountNonLocked = true;
     /**
      * 密码没有过期
      */
-    boolean credentialsNonExpired = true;
+    private boolean credentialsNonExpired = true;
     /**
      * 账户是否可用（是否被删除）
      */
-    boolean enabled = true;
+    private boolean enabled = true;
 
     /*--------------------------------------------*/
 
@@ -56,5 +58,15 @@ public class TbUserPO {
      * 邮箱
      */
     private String email;
+
+    /**
+     * 创建时间
+     */
+    private String created;
+
+    /**
+     * 更新时间
+     */
+    private Date updated;
 
 }
