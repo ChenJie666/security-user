@@ -1,8 +1,7 @@
 package oauth2.config.auth;
 
 import oauth2.config.auth.rewrite.MyJwtAccessTokenConverter;
-import oauth2.feign.UAAClient;
-import org.springframework.beans.factory.annotation.Value;
+import oauth2.feign.UaaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -31,7 +30,7 @@ public class TokenConfig {
 //    private static final String SIGNING_KEY = "uaa123";
 
     @Resource
-    private UAAClient uaaClient;
+    private UaaClient uaaClient;
 
     @Resource
     private Environment environment;

@@ -44,10 +44,12 @@ public class ResourceServerConfig {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
+            http.csrf().disable().authorizeRequests()
 //                    .antMatchers("/order/**").access("#oauth2.hasScope('ROLE_ADMIN')");
+                    .antMatchers("/user/getTbUser**","/user/getRoleCodes","/user/getAuthorities").permitAll()
                     .antMatchers("/user/**").hasAnyAuthority("hifun")/*access("#oauth2.hasScope('ROLE_USER')")*/
                     .antMatchers("/administrator/**").hasAnyAuthority("/users/");
+
         }
     }
 

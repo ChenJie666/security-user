@@ -12,7 +12,7 @@ import java.util.List;
  * @Data: 2020/6/11 18:09
  */
 @Component
-public interface AdminMapper {
+public interface AdministratorMapper {
 
     /**
      * 根据用户名查询

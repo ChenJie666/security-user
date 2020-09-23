@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Data: 2020/8/15 11:51
  */
 @FeignClient("TEST-UAA-CENTER")
-public interface UAAClient {
+public interface UaaClient {
 
 //    @PostMapping(path = "/oauth/token", headers = "Authorization=${}")
 //    String oauthToken(@RequestParam String client_id,
@@ -19,6 +19,8 @@ public interface UAAClient {
 //                      @RequestParam String password
 //    );
 
+
     @GetMapping(path = "/uaa/publicKey")
     String publicKey();
+
 }

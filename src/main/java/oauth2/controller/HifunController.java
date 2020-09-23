@@ -15,7 +15,7 @@ import javax.annotation.Resource;
  * @Data: 2020/9/10 17:42
  */
 @RestController
-public class UserController {
+public class HifunController {
 
     @Resource
     private HifunFeign hifunFeign;
