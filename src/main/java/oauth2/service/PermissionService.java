@@ -1,8 +1,7 @@
 package oauth2.service;
 
-import oauth2.entities.SearchFactorVO;
-import oauth2.entities.TbPermissionPO;
-import oauth2.entities.TbUserPO;
+import com.baomidou.mybatisplus.extension.service.IService;
+import oauth2.entities.*;
 
 import java.util.List;
 
@@ -11,13 +10,13 @@ import java.util.List;
  * @Author: CJ
  * @Data: 2020/9/23 15:01
  */
-public interface PermissionService {
+public interface PermissionService extends IService<TbPermissionPO> {
 
     /**
      * 查询所有权限信息
      * @return
      */
-    List<TbPermissionPO> findAllPermissions();
+    ObjListPO<TbPermissionPO> findAllPermissions(Integer pageCurrent, Integer pageSize);
 
     /**
      * 查询所有权限名
@@ -29,13 +28,25 @@ public interface PermissionService {
      * 根据权限名查询权限信息
      * @return
      */
-    TbPermissionPO findPermissionByName();
+    TbPermissionPO findPermissionByName(String permissionname);
 
     /**
      * 根据权限id查询权限信息
      * @return
      */
-    TbPermissionPO findPermissionById();
+    TbPermissionPO findPermissionById(Integer id);
+
+    /**
+     * 根据权限父id查询所有子权限信息
+     * @return
+     */
+    List<TbPermissionPO> findPermissionsByParentId(Integer parentId);
+
+    /**
+     * 根据权限父id查询所有子权限名
+     * @return
+     */
+    List<String> findPermissionNamesByParentId(Integer parentId);
 
     /**
      * 获取筛选后的所有权限信息

@@ -1,5 +1,7 @@
 package oauth2.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import oauth2.entities.ObjListPO;
 import oauth2.entities.SearchFactorVO;
 import oauth2.entities.TbUserPO;
 
@@ -10,13 +12,13 @@ import java.util.List;
  * @Author: CJ
  * @Data: 2020/9/23 15:00
  */
-public interface AdministratorService {
+public interface AdministratorService extends IService<TbUserPO> {
 
     /**
      * 查询所有用户信息
      * @return
      */
-    List<TbUserPO> findAllUsers();
+    ObjListPO<TbUserPO> findAllUsers(Integer pageCurrent, Integer pageSize);
 
     /**
      * 查询所有用户名

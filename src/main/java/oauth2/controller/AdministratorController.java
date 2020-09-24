@@ -2,8 +2,8 @@ package oauth2.controller;
 
 import oauth2.entities.*;
 import oauth2.service.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.parameters.P;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -23,9 +23,9 @@ public class AdministratorController {
     /**
      * 查询
      */
-    @GetMapping(path = "/administrator/findAllUsers")
-    public CommonResult<List<TbUserPO>> findAllUsers() {
-        return CommonResult.success(adminService.findAllUsers());
+    @GetMapping(path = "/administrator/findAllUsers/{pageCurrent}/{pageSize}")
+    public CommonResult<ObjListPO<TbUserPO>> findAllUsers(@PathVariable Integer pageCurrent, @PathVariable Integer pageSize) {
+        return CommonResult.success(adminService.findAllUsers(pageCurrent, pageSize));
     }
 
     @GetMapping(path = "/administrator/findAllNames")
@@ -33,18 +33,18 @@ public class AdministratorController {
         return CommonResult.success(adminService.findAllUserNames());
     }
 
-    @GetMapping(path = "/administrator/findUserByName")
-    public CommonResult<TbUserPO> findUserByName(String username) {
+    @GetMapping(path = "/administrator/findUserByName/{username}")
+    public CommonResult<TbUserPO> findUserByName(@PathVariable String username) {
         return CommonResult.success(adminService.findUserByName(username));
     }
 
-    @GetMapping(path = "/administrator/findUserById")
-    public CommonResult<TbUserPO> findUserById(Integer id) {
+    @GetMapping(path = "/administrator/findUserById/{id}")
+    public CommonResult<TbUserPO> findUserById(@PathVariable Integer id) {
         return CommonResult.success(adminService.findUserById(id));
     }
 
-    @GetMapping(path = "/administrator/findUsersByFactor")
-    public CommonResult<List<TbUserPO>> findUsersByFactor(SearchFactorVO searchFactorVO){
+    @PostMapping(path = "/administrator/findUsersByFactor")
+    public CommonResult<List<TbUserPO>> findUsersByFactor(@RequestBody SearchFactorVO searchFactorVO){
         return CommonResult.success(adminService.findUsersByFactor(searchFactorVO));
     }
 
