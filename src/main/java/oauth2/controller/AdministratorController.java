@@ -1,8 +1,10 @@
 package oauth2.controller;
 
 import oauth2.entities.*;
+import oauth2.entities.po.ObjListPO;
+import oauth2.entities.po.TbRolePO;
+import oauth2.entities.po.TbUserPO;
 import oauth2.service.*;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -51,16 +53,31 @@ public class AdministratorController {
     /**
      * 添加
      */
-
+    @PostMapping(path = "/administrator/addAdministrator")
+    public CommonResult<String> addAdministrator(@RequestBody TbUserPO tbAdministratorPO) {
+        System.out.println("*****tbAdministratorPO:" + tbAdministratorPO);
+        adminService.addAdministrator(tbAdministratorPO);
+        return CommonResult.success("角色添加成功");
+    }
 
     /**
      * 修改
      */
-
+    @PostMapping(path = "/administrator/updateAdministrator")
+    public CommonResult<String> updateAdministrator(@RequestBody TbUserPO tbAdministratorPO) {
+        System.out.println("*****tbAdministratorPO:" + tbAdministratorPO);
+        adminService.updateAdministrator(tbAdministratorPO);
+        return CommonResult.success("角色修改成功");
+    }
 
     /**
      * 删除
      */
+    @DeleteMapping(path = "/administrator/deleteAdministrator/{administratorId}")
+    public CommonResult<String> deleteAdministrator(@PathVariable Integer administratorId) {
+        adminService.deleteAdministrator(administratorId);
+        return CommonResult.success("角色删除成功");
+    }
 
 
 }

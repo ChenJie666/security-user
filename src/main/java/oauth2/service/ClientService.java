@@ -1,10 +1,10 @@
 package oauth2.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import oauth2.entities.ObjListPO;
+import oauth2.entities.CommonResult;
+import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
-import oauth2.entities.TbClientPO;
-import oauth2.entities.TbUserPO;
+import oauth2.entities.po.TbClientPO;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public interface ClientService extends IService<TbClientPO> {
      * 根据客户端名查询客户端信息
      * @return
      */
-    TbClientPO findClientByName(String clientId);
+    TbClientPO findClientByClientId(String clientId);
 
     /**
      * 获取筛选后的所有客户端信息
@@ -39,4 +39,26 @@ public interface ClientService extends IService<TbClientPO> {
      * @return
      */
     List<TbClientPO> findClientsByFactor(SearchFactorVO searchFactorVO);
+
+    /**
+     * 添加客户端
+     * @param tbClientPO
+     * @return
+     */
+    void addClient(TbClientPO tbClientPO);
+
+    /**
+     * 更改客户端
+     * @param tbClientPO
+     * @return
+     */
+    void updateClient(TbClientPO tbClientPO);
+
+    /**
+     * 删除客户端
+     * @param clientId
+     * @return
+     */
+    void deleteClient(String clientId);
+
 }

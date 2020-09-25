@@ -1,6 +1,6 @@
 package oauth2.controller;
 
-import oauth2.entities.TbUserPO;
+import oauth2.entities.po.TbUserPO;
 import oauth2.service.FeignService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

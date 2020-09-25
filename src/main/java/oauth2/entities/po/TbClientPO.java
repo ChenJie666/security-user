@@ -1,7 +1,13 @@
-package oauth2.entities;
+package oauth2.entities.po;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.Date;
 
 /**
  * @Description:
@@ -10,9 +16,12 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
+@TableName("oauth_client_details")
 public class TbClientPO {
 
+    @TableId
     private String clientId;
+
     private String resourceIds;
     private String clientSecret;
     private String scope;
@@ -23,5 +32,9 @@ public class TbClientPO {
     private Integer refreshTokenValidity;
     private String additionalInformation;
     private String autoapprove;
+    @TableField(fill = FieldFill.INSERT)
+    private Date created;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updated;
 
 }

@@ -9,6 +9,22 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: abc123
+  jpa:
+    #配置数据库类型
+    database: mysql
+    #指定数据库的引擎
+    database-platform: org.hibernate.dialect.MySQL57Dialect
+    #配置是否打印sql
+    show-sql: true
+    #Hibernate相关配置
+    hibernate:
+      #配置级联等级
+      #      ddl-auto: create
+      ddl-auto: update
+    open-in-view: false
+#    jackson:
+#      property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
+
 
 eureka:
   client:

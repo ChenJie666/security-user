@@ -1,9 +1,9 @@
 package oauth2.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import oauth2.entities.ObjListPO;
+import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
-import oauth2.entities.TbRolePO;
+import oauth2.entities.po.TbRolePO;
 
 import java.util.List;
 
@@ -56,4 +56,22 @@ public interface RoleService extends IService<TbRolePO> {
      * @return
      */
     List<TbRolePO> findRolesByFactor(SearchFactorVO searchFactorVO);
+
+    /**
+     * 添加角色
+     * @param tbRolePO
+     */
+    void addRole(TbRolePO tbRolePO);
+
+    /**
+     * 更新角色
+     * @param tbRolePO
+     */
+    void updateRole(TbRolePO tbRolePO);
+
+    /**
+     * 删除角色
+     * @param roleId
+     */
+    void deleteRole(Integer roleId);
 }

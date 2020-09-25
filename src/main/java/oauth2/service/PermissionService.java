@@ -2,6 +2,8 @@ package oauth2.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import oauth2.entities.*;
+import oauth2.entities.po.ObjListPO;
+import oauth2.entities.po.TbPermissionPO;
 
 import java.util.List;
 
@@ -54,4 +56,26 @@ public interface PermissionService extends IService<TbPermissionPO> {
      * @return
      */
     List<TbPermissionPO> findPermissionsByFactor(SearchFactorVO searchFactorVO);
+
+    /**
+     * 添加权限
+     * @param tbPermissionPO
+     * @return
+     */
+    void addPermission(TbPermissionPO tbPermissionPO);
+
+    /**
+     * 更改权限
+     * @param tbPermissionPO
+     * @return
+     */
+    void updatePermission(TbPermissionPO tbPermissionPO);
+
+    /**
+     * 删除权限
+     * @param permissionId
+     * @return
+     */
+    void deletePermission(Integer permissionId);
+
 }

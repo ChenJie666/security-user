@@ -1,8 +1,7 @@
 package oauth2.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import oauth2.dao.FeignMapper;
-import oauth2.entities.TbUserPO;
+import oauth2.entities.po.TbUserPO;
 import oauth2.service.FeignService;
 import org.springframework.stereotype.Service;
 

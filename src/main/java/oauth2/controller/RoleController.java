@@ -1,6 +1,9 @@
 package oauth2.controller;
 
 import oauth2.entities.*;
+import oauth2.entities.po.ObjListPO;
+import oauth2.entities.po.TbClientPO;
+import oauth2.entities.po.TbRolePO;
 import oauth2.service.RoleService;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,15 +62,30 @@ public class RoleController {
     /**
      * 添加
      */
-
+    @PostMapping(path = "/role/addRole")
+    public CommonResult<String> addRole(@RequestBody TbRolePO tbRolePO) {
+        System.out.println("*****tbRolePO:" + tbRolePO);
+        roleService.addRole(tbRolePO);
+        return CommonResult.success("角色添加成功");
+    }
 
     /**
      * 修改
      */
-
+    @PostMapping(path = "/role/updateRole")
+    public CommonResult<String> updateRole(@RequestBody TbRolePO tbRolePO) {
+        System.out.println("*****tbRolePO:" + tbRolePO);
+        roleService.updateRole(tbRolePO);
+        return CommonResult.success("角色修改成功");
+    }
 
     /**
      * 删除
      */
+    @DeleteMapping(path = "/role/deleteRole/{roleId}")
+    public CommonResult<String> deleteRole(@PathVariable Integer roleId) {
+        roleService.deleteRole(roleId);
+        return CommonResult.success("角色删除成功");
+    }
 
 }

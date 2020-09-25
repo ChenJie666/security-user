@@ -6,10 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.jsonwebtoken.lang.Assert;
 import oauth2.dao.PermissionMapper;
-import oauth2.entities.ObjListPO;
+import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
-import oauth2.entities.TbPermissionPO;
-import oauth2.entities.TbRolePO;
+import oauth2.entities.po.TbPermissionPO;
 import oauth2.service.PermissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -90,5 +89,32 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,TbPermis
     @Override
     public List<TbPermissionPO> findPermissionsByFactor(SearchFactorVO searchFactorVO) {
         return null;
+    }
+
+    /**
+     * 添加
+     */
+    @Override
+    public void addPermission(TbPermissionPO tbPermissionPO) {
+        int insert = baseMapper.insert(tbPermissionPO);
+        Assert.isTrue(insert>0,"权限添加成功");
+    }
+
+    /**
+     * 修改
+     */
+    @Override
+    public void updatePermission(TbPermissionPO tbPermissionPO) {
+        int update = baseMapper.updateById(tbPermissionPO);
+        Assert.isTrue(update>0,"权限修改成功");
+    }
+
+    /**
+     * 删除
+     */
+    @Override
+    public void deletePermission(Integer permissionId) {
+        int delete = baseMapper.deleteById(permissionId);
+        Assert.isTrue(delete>0,"权限删除成功");
     }
 }

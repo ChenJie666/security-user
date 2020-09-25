@@ -1,6 +1,8 @@
 package oauth2.controller;
 
 import oauth2.entities.*;
+import oauth2.entities.po.ObjListPO;
+import oauth2.entities.po.TbPermissionPO;
 import oauth2.service.PermissionService;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,15 +61,30 @@ public class PermissionController {
     /**
      * 添加
      */
-
+    @PostMapping(path = "/permission/addPermission")
+    public CommonResult<String> addPermission(@RequestBody TbPermissionPO tbPermissionPO) {
+        System.out.println("*****tbPermissionPO:" + tbPermissionPO);
+        permissionService.addPermission(tbPermissionPO);
+        return CommonResult.success("权限添加成功");
+    }
 
     /**
      * 修改
      */
-
+    @PostMapping(path = "/permission/updatePermission")
+    public CommonResult<String> updatePermission(@RequestBody TbPermissionPO tbPermissionPO) {
+        System.out.println("*****tbPermissionPO:" + tbPermissionPO);
+        permissionService.updatePermission(tbPermissionPO);
+        return CommonResult.success("权限修改成功");
+    }
 
     /**
      * 删除
      */
+    @DeleteMapping(path = "/permission/deletePermission/{permissionId}")
+    public CommonResult<String> deletePermission(@PathVariable Integer permissionId) {
+        permissionService.deletePermission(permissionId);
+        return CommonResult.success("权限删除成功");
+    }
 
 }

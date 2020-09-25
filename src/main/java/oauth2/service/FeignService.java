@@ -1,6 +1,6 @@
 package oauth2.service;
 
-import oauth2.entities.TbUserPO;
+import oauth2.entities.po.TbUserPO;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package oauth2.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import oauth2.entities.TbPermissionPO;
+import oauth2.entities.po.TbPermissionPO;
 import org.springframework.stereotype.Component;
 
 /**

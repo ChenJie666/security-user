@@ -1,5 +1,9 @@
-package oauth2.entities;
+package oauth2.entities.po;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,6 +17,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
+@TableName("tb_user")
 public class TbUserPO {
 
 //    /**
@@ -45,6 +50,7 @@ public class TbUserPO {
     /**
      * 用户id
      */
+    @TableId
     private Integer id;
     /**
      * 用户名
@@ -62,11 +68,13 @@ public class TbUserPO {
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private String created;
 
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updated;
 
 }

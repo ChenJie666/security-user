@@ -1,9 +1,10 @@
 package oauth2.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import oauth2.entities.ObjListPO;
+import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
-import oauth2.entities.TbUserPO;
+import oauth2.entities.po.TbRolePO;
+import oauth2.entities.po.TbUserPO;
 
 import java.util.List;
 
@@ -45,4 +46,21 @@ public interface AdministratorService extends IService<TbUserPO> {
      */
     List<TbUserPO> findUsersByFactor(SearchFactorVO searchFactorVO);
 
+    /**
+     * 添加管理员
+     * @param tbAdministratorPO
+     */
+    void addAdministrator(TbUserPO tbAdministratorPO);
+
+    /**
+     * 更新管理员
+     * @param tbAdministratorPO
+     */
+    void updateAdministrator(TbUserPO tbAdministratorPO);
+
+    /**
+     * 删除管理员
+     * @param administratorId
+     */
+    void deleteAdministrator(Integer administratorId);
 }

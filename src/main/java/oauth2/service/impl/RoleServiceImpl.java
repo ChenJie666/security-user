@@ -6,16 +6,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.jsonwebtoken.lang.Assert;
 import oauth2.dao.RoleMapper;
-import oauth2.entities.ObjListPO;
+import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
-import oauth2.entities.TbRolePO;
-import oauth2.entities.TbUserPO;
+import oauth2.entities.po.TbRolePO;
 import oauth2.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -24,14 +22,17 @@ import java.util.stream.Collectors;
  * @Data: 2020/9/24 10:28
  */
 @Service
-public class RoleServiceImpl extends ServiceImpl<RoleMapper,TbRolePO> implements RoleService {
+public class RoleServiceImpl extends ServiceImpl<RoleMapper, TbRolePO> implements RoleService {
 
+    /**
+     * 查询
+     */
     @Override
     public ObjListPO<TbRolePO> findAllRoles(Integer pageCurrent, Integer pageSize) {
         QueryWrapper<TbRolePO> tbRolePOQueryWrapper = new QueryWrapper<>();
         IPage<TbRolePO> tbRolePOIPage = baseMapper.selectPage(new Page<>(pageCurrent, pageSize), tbRolePOQueryWrapper);
 
-        Assert.notEmpty(tbRolePOIPage.getRecords(),HttpStatus.NOT_FOUND.toString());
+        Assert.notEmpty(tbRolePOIPage.getRecords(), HttpStatus.NOT_FOUND.toString());
 
         return new ObjListPO<>(tbRolePOIPage.getCurrent(), tbRolePOIPage.getSize(), tbRolePOIPage.getPages(), tbRolePOIPage.getTotal(), tbRolePOIPage.getRecords());
     }
@@ -41,7 +42,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,TbRolePO> implements
         QueryWrapper<TbRolePO> tbRolePOQueryWrapper = new QueryWrapper<>();
         List<TbRolePO> roles = baseMapper.selectList(tbRolePOQueryWrapper.select("name"));
 
-        Assert.notEmpty(roles,HttpStatus.NOT_FOUND.toString());
+        Assert.notEmpty(roles, HttpStatus.NOT_FOUND.toString());
 
         return roles.stream().map(TbRolePO::getName).collect(Collectors.toList());
     }
@@ -93,4 +94,30 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,TbRolePO> implements
         return null;
     }
 
+    /**
+     * 查询
+     */
+    @Override
+    public void addRole(TbRolePO tbRolePO) {
+        int insert = baseMapper.insert(tbRolePO);
+        Assert.isTrue(insert > 0, "添加角色失败");
+    }
+
+    /**
+     * 更新
+     */
+    @Override
+    public void updateRole(TbRolePO tbRolePO) {
+        int update = baseMapper.updateById(tbRolePO);
+        Assert.isTrue(update > 0, "更新角色失败");
+    }
+
+    /**
+     * 删除
+     */
+    @Override
+    public void deleteRole(Integer roleId) {
+        int delete = baseMapper.deleteById(roleId);
+        Assert.isTrue(delete > 0, "删除角色失败");
+    }
 }
