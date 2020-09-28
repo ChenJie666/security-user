@@ -1,6 +1,7 @@
 package oauth2.entities.jpa;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @Description:
@@ -24,5 +25,11 @@ public class OauthClientDetails {
     @Column(length = 4096)
     private String additionalInformation;
     private String autoapprove;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date created;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date updated;
 
 }

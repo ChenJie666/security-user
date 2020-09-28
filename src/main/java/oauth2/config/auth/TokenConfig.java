@@ -1,7 +1,7 @@
 package oauth2.config.auth;
 
 import oauth2.config.auth.rewrite.MyJwtAccessTokenConverter;
-import oauth2.feign.UaaClient;
+import oauth2.feign.UaaFeign;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -30,7 +30,7 @@ public class TokenConfig {
 //    private static final String SIGNING_KEY = "uaa123";
 
     @Resource
-    private UaaClient uaaClient;
+    private UaaFeign uaaClient;
 
     @Resource
     private Environment environment;
@@ -39,7 +39,7 @@ public class TokenConfig {
     public PublicKey hifunPublicKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         String hifunPublicKey = environment.getProperty("jwt.publicKey");
         System.out.println("***publicKeyStr：" + hifunPublicKey);
-        byte[]         keyBytes = (new BASE64Decoder()).decodeBuffer(hifunPublicKey);
+        byte[] keyBytes = (new BASE64Decoder()).decodeBuffer(hifunPublicKey);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         PublicKey rsaPublicKey = keyFactory.generatePublic(keySpec);
