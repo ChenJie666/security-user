@@ -30,7 +30,7 @@ public class AdministratorController {
     /**
      * 查询
      */
-    @GetMapping(path = "/administrator/findAllUsers/{pageCurrent}/{pageSize}")
+    @GetMapping(path = "/uc/administrator/findAllUsers/{pageCurrent}/{pageSize}")
     @ApiOperation(value = "查询所有的管理员")
     public CommonResult<ObjListPO<TbUserPO>> findAllUsers(@ApiParam(name = "pageCurrent", value = "查询的页数",required = true)
                                                           @PathVariable Integer pageCurrent,
@@ -39,25 +39,25 @@ public class AdministratorController {
         return CommonResult.success(adminService.findAllUsers(pageCurrent, pageSize));
     }
 
-    @GetMapping(path = "/administrator/findAllNames")
+    @GetMapping(path = "/uc/administrator/findAllNames")
     @ApiOperation(value = "查询所有的管理员名")
     public CommonResult<List<String>> findAllNames() {
         return CommonResult.success(adminService.findAllUserNames());
     }
 
-    @GetMapping(path = "/administrator/findUserByName/{username}")
+    @GetMapping(path = "/uc/administrator/findUserByName/{username}")
     @ApiOperation(value = "根据管理员名查询管理员")
     public CommonResult<TbUserPO> findUserByName(@ApiParam(name = "username",value = "用户名",required = true) @PathVariable String username) {
         return CommonResult.success(adminService.findUserByName(username));
     }
 
-    @GetMapping(path = "/administrator/findUserById/{id}")
+    @GetMapping(path = "/uc/administrator/findUserById/{id}")
     @ApiOperation(value = "根据管理员id查询管理员")
     public CommonResult<TbUserPO> findUserById(@ApiParam(name = "id",value = "管理员id",required = true) @PathVariable Integer id) {
         return CommonResult.success(adminService.findUserById(id));
     }
 
-    @PostMapping(path = "/administrator/findUsersByFactor")
+    @PostMapping(path = "/uc/administrator/findUsersByFactor")
     @ApiOperation(value = "根据条件查询管理员")
     public CommonResult<List<TbUserPO>> findUsersByFactor(@ApiParam(name = "searchFactorVO",value = "筛选信息",required = true) @RequestBody SearchFactorVO searchFactorVO) {
         return CommonResult.success(adminService.findUsersByFactor(searchFactorVO));
@@ -66,7 +66,7 @@ public class AdministratorController {
     /**
      * 添加
      */
-    @PostMapping(path = "/administrator/addAdministrator")
+    @PostMapping(path = "/uc/administrator/addAdministrator")
     @ApiOperation(value = "添加管理员")
     public CommonResult<String> addAdministrator(@ApiParam(name= "tbAdministratorPO",value = "管理员对象",required = true) @RequestBody TbUserPO tbAdministratorPO) {
         System.out.println("*****tbAdministratorPO:" + tbAdministratorPO);
@@ -77,7 +77,7 @@ public class AdministratorController {
     /**
      * 修改
      */
-    @PostMapping(path = "/administrator/updateAdministrator")
+    @PostMapping(path = "/uc/administrator/updateAdministrator")
     @ApiOperation(value = "更新管理员")
     public CommonResult<String> updateAdministrator(@ApiParam(name = "tbAdministratorPO",value = "管理员对象",required = true) @RequestBody TbUserPO tbAdministratorPO) {
         System.out.println("*****tbAdministratorPO:" + tbAdministratorPO);
@@ -88,7 +88,7 @@ public class AdministratorController {
     /**
      * 删除
      */
-    @DeleteMapping(path = "/administrator/deleteAdministrator/{administratorId}")
+    @DeleteMapping(path = "/uc/administrator/deleteAdministrator/{administratorId}")
     @ApiOperation(value = "删除管理员")
     public CommonResult<String> deleteAdministrator(@ApiParam(name = "administratorId",value = "管理员id",required = true) @PathVariable Integer administratorId) {
         adminService.deleteAdministrator(administratorId);

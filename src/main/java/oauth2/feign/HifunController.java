@@ -1,4 +1,4 @@
-package oauth2.controller;
+package oauth2.feign;
 
 import cn.hutool.json.JSONObject;
 import oauth2.entities.CommonResult;

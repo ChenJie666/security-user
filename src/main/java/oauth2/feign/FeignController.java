@@ -1,4 +1,4 @@
-package oauth2.controller;
+package oauth2.feign;
 
 import oauth2.entities.po.TbUserPO;
 import oauth2.service.FeignService;
@@ -25,17 +25,17 @@ public class FeignController {
      * 以下是认证中心远程调用用户中心的接口，不设权限，需要在gateway拦截这些请求路径。
      * @return
      */
-    @GetMapping(path = "/user/getTbUser")
+    @GetMapping(path = "/feign/user/getTbUser")
     public TbUserPO getTbUser(String username){
         return administratorService.getTbUser(username);
     }
 
-    @GetMapping(path = "/user/getRoleCodes")
+    @GetMapping(path = "/feign/user/getRoleCodes")
     public List<String> getRoleCodes(String username){
         return administratorService.getRoleCodes(username);
     }
 
-    @PostMapping(path = "/user/getAuthorities")
+    @PostMapping(path = "/feign/user/getAuthorities")
     public List<String> getAuthorities(@RequestBody List<String> roleCodes){
         return administratorService.getAuthorities(roleCodes);
     }

@@ -1,6 +1,10 @@
 package oauth2.config;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import oauth2.entities.CommonResult;
+import org.mockito.internal.util.StringUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @Data: 2020/9/16 11:28
  */
 @ControllerAdvice
+@Slf4j
 public class ExceptionAdapter {
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -25,6 +30,18 @@ public class ExceptionAdapter {
 
         e.printStackTrace();
         return CommonResult.error(message);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult<String> feignException(FeignException feignException) {
+        int status = feignException.status();
+        if (status >= 500) {
+            log.error("feignClient调用异常",feignException);
+        }
+        String message = feignException.getMessage();
+
+        return CommonResult.error(status, message);
     }
 
     @ExceptionHandler

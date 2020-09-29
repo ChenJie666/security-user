@@ -9,16 +9,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: abc123
-  redis:
-    host: 116.62.148.11
-    port: 6380
-    password:
-    jedis:
-      pool:
-        max-active: 8
-        max-idle: 8
-        max-wait: -1s
-        min-idle: 0
   jpa:
     #配置数据库类型
     database: mysql

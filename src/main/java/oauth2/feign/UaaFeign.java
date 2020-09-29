@@ -11,15 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient("TEST-UAA-CENTER")
 public interface UaaFeign {
 
-//    @PostMapping(path = "/oauth/token", headers = "Authorization=${}")
-//    String oauthToken(@RequestParam String client_id,
-//                      @RequestParam String client_secret,
-//                      @RequestParam String grant_type,
-//                      @RequestParam String username,
-//                      @RequestParam String password
-//    );
-
-    @GetMapping(path = "/uaa/publicKey")
+    @GetMapping(path = "/feign/uaa/publicKey")
     String publicKey();
 
 }

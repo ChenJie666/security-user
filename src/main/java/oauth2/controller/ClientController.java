@@ -27,7 +27,7 @@ public class ClientController {
     /**
      * 查询
      */
-    @GetMapping(path = "/client/findAllClients/{pageCurrent}/{pageSize}")
+    @GetMapping(path = "/uc/client/findAllClients/{pageCurrent}/{pageSize}")
     @ApiOperation(value = "查询所有的客户端")
     public CommonResult<ObjListPO<TbClientPO>> findAllClients(@ApiParam(name = "pageCurrent", value = "查询的页数", required = true)
                                                               @PathVariable Integer pageCurrent,
@@ -36,19 +36,19 @@ public class ClientController {
         return CommonResult.success(clientService.findAllClients(pageCurrent, pageSize));
     }
 
-    @GetMapping(path = "/client/findAllClientNames")
+    @GetMapping(path = "/uc/client/findAllClientNames")
     @ApiOperation(value = "查询所有的客户端名")
     public CommonResult<List<String>> findAllClientNames() {
         return CommonResult.success(clientService.findAllClientNames());
     }
 
-    @GetMapping(path = "/client/findClientByClientId/{clientId}")
+    @GetMapping(path = "/uc/client/findClientByClientId/{clientId}")
     @ApiOperation(value = "根据客户端名查询客户端")
     public CommonResult<TbClientPO> findClientByName(@ApiParam(name = "clientId",value = "客户端名",required = true) @PathVariable String clientId) {
         return CommonResult.success(clientService.findClientByClientId(clientId));
     }
 
-    @GetMapping(path = "/client/findClientsByFactor")
+    @GetMapping(path = "/uc/client/findClientsByFactor")
     @ApiOperation(value = "根据条件查询客户端")
     public CommonResult<List<TbClientPO>> findClientsByFactor(@ApiParam(name = "searchFactorVO",value = "筛选信息",required = true) SearchFactorVO searchFactorVO) {
         return CommonResult.success(clientService.findClientsByFactor(searchFactorVO));
@@ -57,7 +57,7 @@ public class ClientController {
     /**
      * 添加
      */
-    @PostMapping(path = "/client/addClient")
+    @PostMapping(path = "/uc/client/addClient")
     @ApiOperation(value = "添加客户端")
     public CommonResult<String> addClient(@ApiParam(name = "tbClientPO", value = "客户端对象", required = true) @RequestBody TbClientPO tbClientPO) {
         System.out.println("*****tbClientPO:" + tbClientPO);
@@ -68,7 +68,7 @@ public class ClientController {
     /**
      * 修改
      */
-    @PostMapping(path = "/client/updateClient")
+    @PostMapping(path = "/uc/client/updateClient")
     @ApiOperation(value = "更新客户端")
     public CommonResult<String> updateClient(@ApiParam(name = "tbClientPO", value = "客户端对象", required = true) @RequestBody TbClientPO tbClientPO) {
         System.out.println("*****tbClientPO:" + tbClientPO);
@@ -79,7 +79,7 @@ public class ClientController {
     /**
      * 删除
      */
-    @DeleteMapping(path = "/client/deleteClient/{clinetId}")
+    @DeleteMapping(path = "/uc/client/deleteClient/{clinetId}")
     @ApiOperation(value = "删除客户端")
     public CommonResult<String> deleteClient(@ApiParam(name = "clientId", value = "客户端id", required = true) @PathVariable String clientId) {
         clientService.deleteClient(clientId);
