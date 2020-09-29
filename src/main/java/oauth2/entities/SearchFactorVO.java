@@ -1,5 +1,6 @@
 package oauth2.entities;
 
+import io.swagger.annotations.Api;
 import lombok.Data;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Data;
  * @Data: 2020/9/23 16:12
  */
 @Data
+@Api(value = "搜索条件类")
 public class SearchFactorVO {
 
     /**

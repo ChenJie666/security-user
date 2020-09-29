@@ -1,6 +1,10 @@
 package oauth2.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import oauth2.entities.*;
+import oauth2.entities.jpa.TbUser;
 import oauth2.entities.po.ObjListPO;
 import oauth2.entities.po.TbRolePO;
 import oauth2.entities.po.TbUserPO;
@@ -16,6 +20,7 @@ import java.util.List;
  * @Data: 2020/9/23 11:28
  */
 @RestController
+@Api(value = "管理员操作API", tags = {"管理员信息的增删改查"})
 public class AdministratorController {
 
     @Resource
@@ -26,27 +31,35 @@ public class AdministratorController {
      * 查询
      */
     @GetMapping(path = "/administrator/findAllUsers/{pageCurrent}/{pageSize}")
-    public CommonResult<ObjListPO<TbUserPO>> findAllUsers(@PathVariable Integer pageCurrent, @PathVariable Integer pageSize) {
+    @ApiOperation(value = "查询所有的管理员")
+    public CommonResult<ObjListPO<TbUserPO>> findAllUsers(@ApiParam(name = "pageCurrent", value = "查询的页数",required = true)
+                                                          @PathVariable Integer pageCurrent,
+                                                          @ApiParam(name = "pageSize", value = "每页的记录数",required = true)
+                                                          @PathVariable Integer pageSize) {
         return CommonResult.success(adminService.findAllUsers(pageCurrent, pageSize));
     }
 
     @GetMapping(path = "/administrator/findAllNames")
+    @ApiOperation(value = "查询所有的管理员名")
     public CommonResult<List<String>> findAllNames() {
         return CommonResult.success(adminService.findAllUserNames());
     }
 
     @GetMapping(path = "/administrator/findUserByName/{username}")
-    public CommonResult<TbUserPO> findUserByName(@PathVariable String username) {
+    @ApiOperation(value = "根据管理员名查询管理员")
+    public CommonResult<TbUserPO> findUserByName(@ApiParam(name = "username",value = "用户名",required = true) @PathVariable String username) {
         return CommonResult.success(adminService.findUserByName(username));
     }
 
     @GetMapping(path = "/administrator/findUserById/{id}")
-    public CommonResult<TbUserPO> findUserById(@PathVariable Integer id) {
+    @ApiOperation(value = "根据管理员id查询管理员")
+    public CommonResult<TbUserPO> findUserById(@ApiParam(name = "id",value = "管理员id",required = true) @PathVariable Integer id) {
         return CommonResult.success(adminService.findUserById(id));
     }
 
     @PostMapping(path = "/administrator/findUsersByFactor")
-    public CommonResult<List<TbUserPO>> findUsersByFactor(@RequestBody SearchFactorVO searchFactorVO){
+    @ApiOperation(value = "根据条件查询管理员")
+    public CommonResult<List<TbUserPO>> findUsersByFactor(@ApiParam(name = "searchFactorVO",value = "筛选信息",required = true) @RequestBody SearchFactorVO searchFactorVO) {
         return CommonResult.success(adminService.findUsersByFactor(searchFactorVO));
     }
 
@@ -54,29 +67,32 @@ public class AdministratorController {
      * 添加
      */
     @PostMapping(path = "/administrator/addAdministrator")
-    public CommonResult<String> addAdministrator(@RequestBody TbUserPO tbAdministratorPO) {
+    @ApiOperation(value = "添加管理员")
+    public CommonResult<String> addAdministrator(@ApiParam(name= "tbAdministratorPO",value = "管理员对象",required = true) @RequestBody TbUserPO tbAdministratorPO) {
         System.out.println("*****tbAdministratorPO:" + tbAdministratorPO);
         adminService.addAdministrator(tbAdministratorPO);
-        return CommonResult.success("角色添加成功");
+        return CommonResult.success("管理员添加成功");
     }
 
     /**
      * 修改
      */
     @PostMapping(path = "/administrator/updateAdministrator")
-    public CommonResult<String> updateAdministrator(@RequestBody TbUserPO tbAdministratorPO) {
+    @ApiOperation(value = "更新管理员")
+    public CommonResult<String> updateAdministrator(@ApiParam(name = "tbAdministratorPO",value = "管理员对象",required = true) @RequestBody TbUserPO tbAdministratorPO) {
         System.out.println("*****tbAdministratorPO:" + tbAdministratorPO);
         adminService.updateAdministrator(tbAdministratorPO);
-        return CommonResult.success("角色修改成功");
+        return CommonResult.success("管理员修改成功");
     }
 
     /**
      * 删除
      */
     @DeleteMapping(path = "/administrator/deleteAdministrator/{administratorId}")
-    public CommonResult<String> deleteAdministrator(@PathVariable Integer administratorId) {
+    @ApiOperation(value = "删除管理员")
+    public CommonResult<String> deleteAdministrator(@ApiParam(name = "administratorId",value = "管理员id",required = true) @PathVariable Integer administratorId) {
         adminService.deleteAdministrator(administratorId);
-        return CommonResult.success("角色删除成功");
+        return CommonResult.success("管理员删除成功");
     }
 
 
