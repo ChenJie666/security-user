@@ -1,4 +1,4 @@
-package oauth2.feign;
+package oauth2.controller;
 
 import cn.hutool.json.JSONObject;
 import oauth2.entities.CommonResult;
@@ -24,7 +24,7 @@ public class HifunController {
      * 获取当前登录用户信息
      * @return
      */
-    @GetMapping("/user/getUserInfo")
+    @GetMapping("/uc/user/getUserInfo")
     public CommonResult<String> getUserInfo(){
         System.out.println("进入USER-CENTER");
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -36,7 +36,7 @@ public class HifunController {
      * 获取当前登录用户手机号
      * @return
      */
-    @GetMapping("/user/getMobile")
+    @GetMapping("/uc/user/getMobile")
     public CommonResult<String> getMobile(){
         System.out.println("进入USER-CENTER");
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -49,7 +49,7 @@ public class HifunController {
      * 获取当前用户的id
      * @return
      */
-    @GetMapping("/user/getUserId")
+    @GetMapping("/uc/user/getUserId")
     public CommonResult<Integer> getUserId(){
         System.out.println("进入USER-CENTER");
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
