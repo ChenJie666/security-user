@@ -2,7 +2,6 @@ package oauth2.feign;
 
 import io.swagger.annotations.Api;
 import oauth2.common.RedisKeyConfig;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

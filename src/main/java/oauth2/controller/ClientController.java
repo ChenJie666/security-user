@@ -18,7 +18,7 @@ import java.util.List;
  * @Data: 2020/9/23 16:20
  */
 @RestController
-@Api(value = "客户端操作API", tags = {"客户端信息的增删改查"})
+@Api(value = "客户端操作API", tags = {"客户端信息"})
 public class ClientController {
 
     @Resource

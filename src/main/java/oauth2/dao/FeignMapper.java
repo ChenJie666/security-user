@@ -53,9 +53,4 @@ public interface FeignMapper {
             "</script>")
     List<String> findAuthorityByRoleCodes(@Param(value = "roleCodes") List<String> roleCodes);
 
-    @Select("SELECT * " +
-            "FROM tb_user " +
-            "WHERE id=#{id}")
-    TbUserPO getInfoById(@Param("id") Integer id);
-
 }

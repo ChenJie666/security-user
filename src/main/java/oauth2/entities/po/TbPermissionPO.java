@@ -1,9 +1,6 @@
 package oauth2.entities.po;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,7 +19,7 @@ import java.util.Date;
 @ApiModel(value = "权限类")
 public class TbPermissionPO {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "主键id",hidden = true)
     private Long id;
     @ApiModelProperty(value = "父id")

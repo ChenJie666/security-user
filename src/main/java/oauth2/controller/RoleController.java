@@ -19,7 +19,7 @@ import java.util.List;
  * @Data: 2020/9/23 16:20
  */
 @RestController
-@Api(value = "角色操作API", tags = {"角色信息的增删改查"})
+@Api(value = "角色操作API", tags = {"角色信息"})
 public class RoleController {
 
     @Resource

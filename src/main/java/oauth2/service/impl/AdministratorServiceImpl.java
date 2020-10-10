@@ -11,9 +11,13 @@ import oauth2.entities.SearchFactorVO;
 import oauth2.entities.po.TbRolePO;
 import oauth2.entities.po.TbUserPO;
 import oauth2.service.AdministratorService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,4 +101,5 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
         int delete = baseMapper.deleteById(administratorId);
         Assert.isTrue(delete > 0, "删除管理员成功");
     }
+
 }
