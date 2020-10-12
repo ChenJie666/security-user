@@ -1,7 +1,7 @@
 package oauth2.controller;
 
 import io.swagger.annotations.Api;
-import oauth2.entities.CommonResult;
+import oauth2.utils.CommonResult;
 import oauth2.entities.po.TbUserPO;
 import oauth2.service.AdministratorService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

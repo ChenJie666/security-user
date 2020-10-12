@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.jsonwebtoken.lang.Assert;
 import oauth2.dao.ClientMapper;
-import oauth2.entities.CommonResult;
 import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
 import oauth2.entities.po.TbClientPO;

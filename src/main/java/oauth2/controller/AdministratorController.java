@@ -7,6 +7,7 @@ import oauth2.entities.*;
 import oauth2.entities.po.ObjListPO;
 import oauth2.entities.po.TbUserPO;
 import oauth2.service.*;
+import oauth2.utils.CommonResult;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,13 +33,13 @@ public class AdministratorController {
     /**
      * 查询
      */
-    @GetMapping(path = "/uc/administrator/findAllUsers/{pageCurrent}/{pageSize}")
+    @GetMapping(path = "/uc/administrator/findAllUsers")
     @ApiOperation(value = "查询所有的管理员")
-    public CommonResult<ObjListPO<TbUserPO>> findAllUsers(@ApiParam(name = "pageCurrent", value = "查询的页数", required = true)
-                                                          @PathVariable Integer pageCurrent,
+    public CommonResult<ObjListPO<TbUserPO>> findAllUsers(@ApiParam(name = "page", value = "查询的页数", required = true)
+                                                          @RequestParam Integer page,
                                                           @ApiParam(name = "pageSize", value = "每页的记录数", required = true)
-                                                          @PathVariable Integer pageSize) {
-        return CommonResult.success(adminService.findAllUsers(pageCurrent, pageSize));
+                                                          @RequestParam Integer pageSize) {
+        return CommonResult.success(adminService.findAllUsers(page, pageSize));
     }
 
     @GetMapping(path = "/uc/administrator/findAllNames")
@@ -85,6 +86,14 @@ public class AdministratorController {
         System.out.println("*****tbAdministratorPO:" + tbAdministratorPO);
         adminService.updateAdministrator(tbAdministratorPO);
         return CommonResult.success("管理员修改成功");
+    }
+
+    @PostMapping(path = "/uc/administrator/enableAdministrator/{userId}")
+    @ApiOperation(value = "更改管理员是否有效")
+    public CommonResult<String> enableAdministrator(@ApiParam(name = "userId", value = "用户id", required = true) @PathVariable Integer userId) {
+        adminService.enableAdministrator(userId);
+
+        return CommonResult.success("管理员有效性修改成功");
     }
 
     /**

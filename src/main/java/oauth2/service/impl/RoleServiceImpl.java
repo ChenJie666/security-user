@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +37,31 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, TbRolePO> implement
 
         return new ObjListPO<>(tbRolePOIPage.getCurrent(), tbRolePOIPage.getSize(), tbRolePOIPage.getPages(), tbRolePOIPage.getTotal(), tbRolePOIPage.getRecords());
     }
+
+    @Override
+    public TbRolePO findAllRoles(Integer roleId) {
+        TbRolePO tbRolePO = baseMapper.selectById(roleId);
+        Assert.notNull(tbRolePO, HttpStatus.NOT_FOUND.toString());
+
+        // 调用递归
+        findChildren(tbRolePO);
+
+        return tbRolePO;
+    }
+
+    private void findChildren(TbRolePO tbRolePO) {
+        System.out.println("*****findChildren:" + tbRolePO);
+        QueryWrapper<TbRolePO> tbRolePOQueryWrapper = new QueryWrapper<>();
+        tbRolePOQueryWrapper.eq("parent_id", tbRolePO.getId()).ne("id",0);
+        List<TbRolePO> tbRolePOs = baseMapper.selectList(tbRolePOQueryWrapper);
+        if (!Objects.isNull(tbRolePOs) && !tbRolePOs.isEmpty()) {
+            tbRolePOs.forEach(this::findChildren);
+        } else {
+            tbRolePOs = null;
+        }
+        tbRolePO.setChildren(tbRolePOs);
+    }
+
 
     @Override
     public List<String> findAllRoleNames() {

@@ -1,7 +1,6 @@
 package oauth2.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import oauth2.entities.CommonResult;
 import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
 import oauth2.entities.po.TbClientPO;

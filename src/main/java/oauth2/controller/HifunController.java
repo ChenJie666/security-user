@@ -1,7 +1,7 @@
 package oauth2.controller;
 
 import cn.hutool.json.JSONObject;
-import oauth2.entities.CommonResult;
+import oauth2.utils.CommonResult;
 import oauth2.feign.HifunFeign;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;

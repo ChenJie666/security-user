@@ -1,7 +1,7 @@
 package oauth2.config.auth.rewrite;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import oauth2.entities.CommonResult;
+import oauth2.utils.CommonResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
@@ -12,8 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @Description:

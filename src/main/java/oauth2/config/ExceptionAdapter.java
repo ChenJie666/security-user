@@ -1,10 +1,8 @@
 package oauth2.config;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
-import oauth2.entities.CommonResult;
-import org.mockito.internal.util.StringUtil;
+import oauth2.utils.CommonResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -58,9 +58,12 @@ public interface AdministratorService extends IService<TbUserPO> {
      */
     void updateAdministrator(TbUserPO tbAdministratorPO);
 
+    void enableAdministrator(Integer userId);
+
     /**
      * 删除管理员
      * @param administratorId
      */
     void deleteAdministrator(Integer administratorId);
+
 }

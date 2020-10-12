@@ -20,6 +20,8 @@ public interface RoleService extends IService<TbRolePO> {
      */
     ObjListPO<TbRolePO> findAllRoles(Integer pageCurrent, Integer pageSize);
 
+    TbRolePO findAllRoles(Integer roleId);
+
     /**
      * 查询所有角色名
      * @return

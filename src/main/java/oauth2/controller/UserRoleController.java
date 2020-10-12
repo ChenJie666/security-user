@@ -3,13 +3,17 @@ package oauth2.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import oauth2.entities.CommonResult;
+import oauth2.utils.CommonResult;
+import oauth2.service.ExpiredTokenService;
 import oauth2.service.UserRoleService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.FutureTask;
 
 /**
  * @Description:
@@ -34,8 +38,14 @@ public class UserRoleController {
         return CommonResult.success(roles);
     }
 
+    @Resource
+    private ExpiredTokenService expiredTokenService;
+
+    @Resource
+    private RabbitTemplate rabbitTemplate;
+
     /**
-     * 用户绑定角色增加
+     * 用户绑定角色增加(添加到过期名单中)
      */
     @PostMapping(path = "/uc/binding/addRoles/{administratorId}")
     @ApiOperation(value = "用户绑定角色增加")
@@ -45,17 +55,32 @@ public class UserRoleController {
                                          @RequestBody List<Integer> roleIds) {
         userRoleService.addRoles(administratorId, roleIds);
 
+        // 异步添加到过期列表
+        new Thread(new FutureTask<>(() -> {
+            rabbitTemplate.convertAndSend("ExpiredTokenExchange", "expiredToken.addExpiredToken", Arrays.asList(administratorId, System.currentTimeMillis() / 1000));
+            return 0;
+        })).start();
+
         return CommonResult.success("用户绑定角色成功");
     }
 
     /**
-     * 用户绑定角色删除
+     * 用户绑定角色删除(添加到过期名单中)
      */
     @DeleteMapping(path = "/uc/binding/deleteRoles")
     @ApiOperation(value = "用户绑定角色删除")
     public CommonResult<String> deleteRoles(@ApiParam(name = "bindIds", value = "用户角色中间表的id列表", required = true)
                                             @RequestBody List<Integer> bindIds) {
         userRoleService.deleteRoles(bindIds);
+
+        // 异步添加到过期列表
+        new Thread(new FutureTask<>(() -> {
+            List<Integer> userIds = expiredTokenService.getUserIdsByUserRole(bindIds);
+            userIds.forEach((administratorId) -> {
+                rabbitTemplate.convertAndSend("ExpiredTokenExchange", "expiredToken.addExpiredToken", Arrays.asList(administratorId, System.currentTimeMillis() / 1000));
+            });
+            return 0;
+        })).start();
 
         return CommonResult.success("用户绑定角色删除成功");
     }

@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -20,7 +21,8 @@ import java.util.Date;
 @Accessors(chain = true)
 @TableName("oauth_client_details")
 @ApiModel(value = "客户端类")
-public class TbClientPO {
+public class TbClientPO implements Serializable {
+    private static final long SerialVersionUID = Long.MIN_VALUE;
 
     @TableId
     @ApiModelProperty(value = "客户端名")

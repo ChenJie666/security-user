@@ -7,6 +7,7 @@ import oauth2.entities.*;
 import oauth2.entities.po.ObjListPO;
 import oauth2.entities.po.TbClientPO;
 import oauth2.service.ClientService;
+import oauth2.utils.CommonResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -27,13 +28,13 @@ public class ClientController {
     /**
      * 查询
      */
-    @GetMapping(path = "/uc/client/findAllClients/{pageCurrent}/{pageSize}")
+    @GetMapping(path = "/uc/client/findAllClients")
     @ApiOperation(value = "查询所有的客户端")
-    public CommonResult<ObjListPO<TbClientPO>> findAllClients(@ApiParam(name = "pageCurrent", value = "查询的页数", required = true)
-                                                              @PathVariable Integer pageCurrent,
+    public CommonResult<ObjListPO<TbClientPO>> findAllClients(@ApiParam(name = "page", value = "查询的页数", required = true)
+                                                              @RequestParam Integer page,
                                                               @ApiParam(name = "pageSize", value = "每页的记录数", required = true)
-                                                              @PathVariable Integer pageSize) {
-        return CommonResult.success(clientService.findAllClients(pageCurrent, pageSize));
+                                                              @RequestParam Integer pageSize) {
+        return CommonResult.success(clientService.findAllClients(page, pageSize));
     }
 
     @GetMapping(path = "/uc/client/findAllClientNames")

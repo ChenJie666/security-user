@@ -1,8 +1,10 @@
 package oauth2.entities.po;
 
+import javassist.SerialVersionUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +14,8 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
-public class ObjListPO<T> {
+public class ObjListPO<T> implements Serializable {
+    private static final long SerialVersionUID = Long.MIN_VALUE;
 
     private long pageCurrent;
 

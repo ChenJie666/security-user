@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.jsonwebtoken.lang.Assert;
 import oauth2.dao.PermissionMapper;
+import oauth2.entities.jpa.TbPermission;
 import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
 import oauth2.entities.po.TbPermissionPO;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +34,31 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,TbPermis
         Assert.notEmpty(tbPermissionPOIPage.getRecords(), HttpStatus.NOT_FOUND.toString());
 
         return new ObjListPO<>(tbPermissionPOIPage.getCurrent(), tbPermissionPOIPage.getSize(), tbPermissionPOIPage.getPages(), tbPermissionPOIPage.getTotal(), tbPermissionPOIPage.getRecords());
+    }
+
+    @Override
+    public TbPermissionPO findAllPermissions(Integer permissionId) {
+        TbPermissionPO tbPermissionPO = baseMapper.selectById(permissionId);
+
+        Assert.notNull(tbPermissionPO, HttpStatus.NOT_FOUND.toString());
+
+        findChildren(tbPermissionPO);
+
+        return tbPermissionPO;
+    }
+
+    private void findChildren(TbPermissionPO tbPermissionPO){
+        System.out.println("*****tbPermissionPO" + tbPermissionPO);
+        QueryWrapper<TbPermissionPO> tbPermissionPOQueryWrapper = new QueryWrapper<>();
+        tbPermissionPOQueryWrapper.eq("parent_id", tbPermissionPO.getId()).ne("id",0);
+        List<TbPermissionPO> tbPermissionPOs = baseMapper.selectList(tbPermissionPOQueryWrapper);
+
+        if (!Objects.isNull(tbPermissionPOs) && !tbPermissionPOs.isEmpty()) {
+            tbPermissionPOs.forEach(this::findChildren);
+        } else {
+            tbPermissionPOs = null;
+        }
+        tbPermissionPO.setChildren(tbPermissionPOs);
     }
 
     @Override
@@ -97,7 +124,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,TbPermis
     @Override
     public void addPermission(TbPermissionPO tbPermissionPO) {
         int insert = baseMapper.insert(tbPermissionPO);
-        Assert.isTrue(insert>0,"权限添加成功");
+        Assert.isTrue(insert>0,"权限添加失败");
     }
 
     /**
@@ -106,7 +133,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,TbPermis
     @Override
     public void updatePermission(TbPermissionPO tbPermissionPO) {
         int update = baseMapper.updateById(tbPermissionPO);
-        Assert.isTrue(update>0,"权限修改成功");
+        Assert.isTrue(update>0,"权限修改失败");
     }
 
     /**
@@ -115,6 +142,6 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,TbPermis
     @Override
     public void deletePermission(Integer permissionId) {
         int delete = baseMapper.deleteById(permissionId);
-        Assert.isTrue(delete>0,"权限删除成功");
+        Assert.isTrue(delete>0,"权限删除失败");
     }
 }

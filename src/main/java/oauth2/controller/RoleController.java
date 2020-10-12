@@ -4,14 +4,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import oauth2.entities.*;
-import oauth2.entities.po.ObjListPO;
-import oauth2.entities.po.TbClientPO;
 import oauth2.entities.po.TbRolePO;
+import oauth2.service.ExpiredTokenService;
 import oauth2.service.RoleService;
+import oauth2.utils.CommonResult;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.FutureTask;
 
 /**
  * @Description:
@@ -28,13 +32,20 @@ public class RoleController {
     /**
      * 查询
      */
-    @GetMapping(path = "/uc/role/findAllRoles/{pageCurrent}/{pageSize}")
+//    @GetMapping(path = "/uc/role/findAllRoles")
+//    @ApiOperation(value = "查询所有的角色")
+//    public CommonResult<ObjListPO<TbRolePO>> findAllRoles(@ApiParam(name = "page", value = "查询的页数", required = true)
+//                                                          @RequestParam Integer page,
+//                                                          @ApiParam(name = "pageSize", value = "每页的记录数", required = true)
+//                                                          @RequestParam Integer pageSize) {
+//        return CommonResult.success(roleService.findAllRoles(page, pageSize));
+//    }
+
+    @GetMapping(path = "/uc/role/findAllRoles")
     @ApiOperation(value = "查询所有的角色")
-    public CommonResult<ObjListPO<TbRolePO>> findAllRoles(@ApiParam(name = "pageCurrent", value = "查询的页数", required = true)
-                                                          @PathVariable Integer pageCurrent,
-                                                          @ApiParam(name = "pageSize", value = "每页的记录数", required = true)
-                                                          @PathVariable Integer pageSize) {
-        return CommonResult.success(roleService.findAllRoles(pageCurrent, pageSize));
+    public CommonResult<TbRolePO> findAllRoles(@ApiParam(name = "roleId", value = "角色id", required = true)
+                                                          @RequestParam Integer roleId) {
+        return CommonResult.success(roleService.findAllRoles(roleId));
     }
 
     @GetMapping(path = "/uc/role/findAllRoleNames")
@@ -84,24 +95,50 @@ public class RoleController {
         return CommonResult.success("角色添加成功");
     }
 
+    @Resource
+    private ExpiredTokenService expiredTokenService;
+
+    @Resource
+    private RabbitTemplate rabbitTemplate;
+
     /**
-     * 修改
+     * 修改(添加有该角色的用户到过期列表)
      */
     @PostMapping(path = "/uc/role/updateRole")
     @ApiOperation(value = "更新角色")
     public CommonResult<String> updateRole(@ApiParam(name = "tbRolePO", value = "角色对象", required = true) @RequestBody TbRolePO tbRolePO) {
         System.out.println("*****tbRolePO:" + tbRolePO);
         roleService.updateRole(tbRolePO);
+
+        // 异步添加到过期列表
+        new Thread(new FutureTask<>(()->{
+            List<Integer> userIds = expiredTokenService.getUserIdsByRoles(Collections.singletonList(tbRolePO.getId()));
+            userIds.forEach((administratorId) -> {
+                rabbitTemplate.convertAndSend("ExpiredTokenExchange", "expiredToken.addExpiredToken", Arrays.asList(administratorId, System.currentTimeMillis() / 1000));
+            });
+            return 0;
+        })).start();
+
         return CommonResult.success("角色修改成功");
     }
 
     /**
-     * 删除
+     * 删除(添加有该角色的用户到过期列表)
      */
     @DeleteMapping(path = "/uc/role/deleteRole/{roleId}")
     @ApiOperation(value = "删除角色")
     public CommonResult<String> deleteRole(@ApiParam(name = "roleId", value = "角色id", required = true) @PathVariable Integer roleId) {
         roleService.deleteRole(roleId);
+
+        // 异步添加到过期列表
+        new Thread(new FutureTask<>(()->{
+            List<Integer> userIds = expiredTokenService.getUserIdsByRoles(Collections.singletonList(roleId));
+            userIds.forEach((administratorId) -> {
+                rabbitTemplate.convertAndSend("ExpiredTokenExchange", "expiredToken.addExpiredToken", Arrays.asList(administratorId, System.currentTimeMillis() / 1000));
+            });
+            return 0;
+        })).start();
+
         return CommonResult.success("角色删除成功");
     }
 

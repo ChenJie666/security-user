@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
  * @Description:
  * @Author: CJ
@@ -21,7 +23,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("tb_user_role")
 @ApiModel(value = "用户角色关联类")
-public class TbUserRolePO {
+public class TbUserRolePO implements Serializable {
+    private static final long SerialVersionUID = Long.MIN_VALUE;
 
     @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "主键",hidden = true)

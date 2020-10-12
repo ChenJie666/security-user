@@ -1,6 +1,7 @@
 package oauth2.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,16 +9,11 @@ import io.jsonwebtoken.lang.Assert;
 import oauth2.dao.AdministratorMapper;
 import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
-import oauth2.entities.po.TbRolePO;
 import oauth2.entities.po.TbUserPO;
 import oauth2.service.AdministratorService;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,6 +67,7 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
 
     @Override
     public List<TbUserPO> findUsersByFactor(SearchFactorVO searchFactorVO) {
+        // TODO
 
         return null;
     }
@@ -81,7 +78,7 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
     @Override
     public void addAdministrator(TbUserPO tbAdministratorPO) {
         int insert = baseMapper.insert(tbAdministratorPO);
-        Assert.isTrue(insert > 0, "添加管理员成功");
+        Assert.isTrue(insert > 0, "添加管理员失败");
     }
 
     /**
@@ -89,8 +86,18 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
      */
     @Override
     public void updateAdministrator(TbUserPO tbAdministratorPO) {
+        //不能修改用户的有效性
+        tbAdministratorPO.setAccountNonExpired(null).setAccountNonLocked(null).setCredentialsNonExpired(null).setEnabled(null);
         int update = baseMapper.updateById(tbAdministratorPO);
-        Assert.isTrue(update > 0, "更新管理员成功");
+        Assert.isTrue(update > 0, "更新管理员失败");
+    }
+
+    @Override
+    public void enableAdministrator(Integer userId) {
+        TbUserPO tbUserPO = baseMapper.selectById(userId);
+        Boolean enabled = tbUserPO.getEnabled();
+        int update = baseMapper.updateById(new TbUserPO().setId(userId).setEnabled(!enabled));
+        Assert.isTrue(update > 0,"管理员有效性更改失败");
     }
 
     /**
@@ -99,7 +106,7 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
     @Override
     public void deleteAdministrator(Integer administratorId) {
         int delete = baseMapper.deleteById(administratorId);
-        Assert.isTrue(delete > 0, "删除管理员成功");
+        Assert.isTrue(delete > 0, "删除管理员失败");
     }
 
 }

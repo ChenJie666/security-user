@@ -20,6 +20,8 @@ public interface PermissionService extends IService<TbPermissionPO> {
      */
     ObjListPO<TbPermissionPO> findAllPermissions(Integer pageCurrent, Integer pageSize);
 
+    TbPermissionPO findAllPermissions(Integer permissionId);
+
     /**
      * 查询所有权限名
      * @return

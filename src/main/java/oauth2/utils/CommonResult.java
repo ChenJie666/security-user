@@ -1,4 +1,4 @@
-package oauth2.entities;
+package oauth2.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

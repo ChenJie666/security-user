@@ -1,7 +1,7 @@
 package oauth2.config.auth.rewrite;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import oauth2.entities.CommonResult;
+import oauth2.utils.CommonResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

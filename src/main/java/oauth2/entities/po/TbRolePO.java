@@ -6,7 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description:
@@ -17,7 +19,8 @@ import java.util.Date;
 @Accessors(chain = true)
 @TableName("tb_role")
 @ApiModel(value = "角色类")
-public class TbRolePO {
+public class TbRolePO implements Serializable {
+    private static final long SerialVersionUID = Long.MIN_VALUE;
 
     @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "主键id",hidden = true)
@@ -36,5 +39,9 @@ public class TbRolePO {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value = "修改时间",hidden = true)
     private Date updated;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "子列表",hidden = true)
+    private List<TbRolePO> children;
 
 }

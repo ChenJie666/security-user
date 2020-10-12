@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
@@ -18,7 +19,8 @@ import java.util.Date;
 @Accessors(chain = true)
 @TableName("tb_user")
 @ApiModel(value = "用户类")
-public class TbUserPO {
+public class TbUserPO implements Serializable {
+    private static final long SerialVersionUID = Long.MIN_VALUE;
 
 //    /**
 //     * 用户名
@@ -33,22 +35,22 @@ public class TbUserPO {
      * 账户没有过期
      */
     @ApiModelProperty(value = "账户没有过期",hidden = true)
-    private boolean accountNonExpired = true;
+    private Boolean accountNonExpired = true;
     /**
      * 账户没被锁定 （是否冻结）
      */
     @ApiModelProperty(value = "账户没被锁定",hidden = true)
-    private boolean accountNonLocked = true;
+    private Boolean accountNonLocked = true;
     /**
      * 密码没有过期
      */
     @ApiModelProperty(value = "密码没有过期",hidden = true)
-    private boolean credentialsNonExpired = true;
+    private Boolean credentialsNonExpired = true;
     /**
      * 账户是否可用（是否被删除）
      */
     @ApiModelProperty(value = "账户是否可用",hidden = true)
-    private boolean enabled = true;
+    private Boolean enabled = true;
 
     /*--------------------------------------------*/
 

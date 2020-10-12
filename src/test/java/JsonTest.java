@@ -1,6 +1,6 @@
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
-import oauth2.entities.CommonResult;
+import oauth2.utils.CommonResult;
 import org.junit.Test;
 
 import java.util.Map;
