@@ -1,20 +1,18 @@
 package oauth2.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.jsonwebtoken.lang.Assert;
 import oauth2.dao.AdministratorMapper;
-import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
 import oauth2.entities.po.TbUserPO;
 import oauth2.service.AdministratorService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.annotation.Resource;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -26,13 +24,72 @@ import java.util.stream.Collectors;
 public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, TbUserPO> implements AdministratorService {
 
     @Override
-    public ObjListPO<TbUserPO> findAllUsers(Integer pageCurrent, Integer pageSize) {
-        QueryWrapper<TbUserPO> tbUserPOQueryWrapper = new QueryWrapper<>();
-        IPage<TbUserPO> tbUserPOIPage = baseMapper.selectPage(new Page<>(pageCurrent, pageSize), tbUserPOQueryWrapper);
+    public TbUserPO findMyUsers(Integer userId) {
+        TbUserPO tbUserPO = baseMapper.selectById(userId);
+        Assert.notNull(tbUserPO, HttpStatus.NOT_FOUND.toString());
 
-        Assert.notEmpty(tbUserPOIPage.getRecords(), HttpStatus.NOT_FOUND.toString());
+        findChildren(tbUserPO);
 
-        return new ObjListPO<>(tbUserPOIPage.getCurrent(), tbUserPOIPage.getSize(), tbUserPOIPage.getPages(), tbUserPOIPage.getTotal(), tbUserPOIPage.getRecords());
+        return tbUserPO;
+    }
+
+    @Override
+    public Set<Integer> findMyUsersList(Integer userId) {
+        TbUserPO tbUserPO = baseMapper.selectById(userId);
+
+        // 查找所有子用户的id
+        HashSet<Integer> userIds = new HashSet<>(Collections.emptySet());
+        findChildren(tbUserPO, userIds);
+        System.out.println("*****userIds" + userIds);
+
+        return userIds;
+    }
+
+    @Resource
+    private AdministratorMapper administratorMapper;
+
+    private void findChildren(TbUserPO tbUserPO) {
+        tbUserPO.setPassword(null);
+        System.out.println("*****findChildren:" + tbUserPO);
+        QueryWrapper<TbUserPO> tbRolePOQueryWrapper = new QueryWrapper<>();
+        tbRolePOQueryWrapper.eq("parent_id", tbUserPO.getId()).ne("id", 0);
+        List<TbUserPO> tbRolePOs = baseMapper.selectList(tbRolePOQueryWrapper);
+        if (!Objects.isNull(tbRolePOs) && !tbRolePOs.isEmpty()) {
+            tbRolePOs.forEach(this::findChildren);
+        } else {
+            tbRolePOs = null;
+        }
+
+        // 查询创建更新者的用户名
+        if (!Objects.isNull(tbUserPO.getCreatorId())) {
+            String creator = administratorMapper.getUsernameById(tbUserPO.getCreatorId());
+            tbUserPO.setCreatorName(creator);
+
+            if(!Objects.isNull(tbUserPO.getUpdaterId())) {
+                if (tbUserPO.getCreatorId().equals(tbUserPO.getUpdaterId())) {
+                    tbUserPO.setUpdaterName(creator);
+                } else {
+                    String updater = administratorMapper.getUsernameById(tbUserPO.getUpdaterId());
+                    tbUserPO.setUpdaterName(updater);
+                }
+            }
+        }
+
+        tbUserPO.setChildren(tbRolePOs);
+    }
+
+    private void findChildren(TbUserPO tbUserPO, Set<Integer> userIds) {
+        System.out.println("*****findChildren:" + tbUserPO);
+        QueryWrapper<TbUserPO> tbRolePOQueryWrapper = new QueryWrapper<>();
+        tbRolePOQueryWrapper.eq("parent_id", tbUserPO.getId()).ne("id", 0);
+        List<TbUserPO> tbUserPOs = baseMapper.selectList(tbRolePOQueryWrapper);
+        if (!Objects.isNull(tbUserPOs) && !tbUserPOs.isEmpty()) {
+            tbUserPOs.forEach(user -> this.findChildren(user, userIds));
+        } else {
+            tbUserPOs = null;
+        }
+        tbUserPO.setChildren(tbUserPOs);
+        userIds.add(tbUserPO.getId());
     }
 
     @Override
@@ -77,6 +134,9 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
      */
     @Override
     public void addAdministrator(TbUserPO tbAdministratorPO) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        int userId = Integer.parseInt(name);
+        tbAdministratorPO.setCreatorId(userId).setUpdaterId(userId);
         int insert = baseMapper.insert(tbAdministratorPO);
         Assert.isTrue(insert > 0, "添加管理员失败");
     }
@@ -86,8 +146,11 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
      */
     @Override
     public void updateAdministrator(TbUserPO tbAdministratorPO) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        int userId = Integer.parseInt(name);
+        tbAdministratorPO.setUpdaterId(userId);
         //不能修改用户的有效性
-        tbAdministratorPO.setAccountNonExpired(null).setAccountNonLocked(null).setCredentialsNonExpired(null).setEnabled(null);
+        tbAdministratorPO.setPassword(null).setAccountNonExpired(null).setAccountNonLocked(null).setCredentialsNonExpired(null).setEnabled(null);
         int update = baseMapper.updateById(tbAdministratorPO);
         Assert.isTrue(update > 0, "更新管理员失败");
     }
@@ -97,7 +160,7 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
         TbUserPO tbUserPO = baseMapper.selectById(userId);
         Boolean enabled = tbUserPO.getEnabled();
         int update = baseMapper.updateById(new TbUserPO().setId(userId).setEnabled(!enabled));
-        Assert.isTrue(update > 0,"管理员有效性更改失败");
+        Assert.isTrue(update > 0, "管理员有效性更改失败");
     }
 
     /**

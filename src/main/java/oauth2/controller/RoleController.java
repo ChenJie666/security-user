@@ -3,12 +3,12 @@ package oauth2.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import oauth2.entities.*;
 import oauth2.entities.po.TbRolePO;
 import oauth2.service.ExpiredTokenService;
 import oauth2.service.RoleService;
 import oauth2.utils.CommonResult;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -41,24 +41,25 @@ public class RoleController {
 //        return CommonResult.success(roleService.findAllRoles(page, pageSize));
 //    }
 
-    @GetMapping(path = "/uc/role/findAllRoles")
-    @ApiOperation(value = "查询所有的角色")
-    public CommonResult<TbRolePO> findAllRoles(@ApiParam(name = "roleId", value = "角色id", required = true)
-                                                          @RequestParam Integer roleId) {
-        return CommonResult.success(roleService.findAllRoles(roleId));
+    @GetMapping(path = "/uc/role/findMyRoles")
+    @ApiOperation(value = "查询该用户和子用户的所有角色")
+    public CommonResult<List<TbRolePO>> findMyRoles() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return CommonResult.success(roleService.findMyRoles(Integer.parseInt(userId)));
     }
 
-    @GetMapping(path = "/uc/role/findAllRoleNames")
-    @ApiOperation(value = "查询所有的角色名")
-    public CommonResult<List<String>> findAllRoleNames() {
-        return CommonResult.success(roleService.findAllRoleNames());
-    }
+//    @GetMapping(path = "/uc/role/findAllRoleNames")
+//    @ApiOperation(value = "查询所有的角色名")
+//    public CommonResult<List<String>> findAllRoleNames() {
+//        return CommonResult.success(roleService.findAllRoleNames());
+//    }
 
-    @GetMapping(path = "/uc/role/findRoleByName/{rolename}")
-    @ApiOperation(value = "根据角色名查询角色")
-    public CommonResult<TbRolePO> findRoleByName(@ApiParam(name = "rolename", value = "角色名", required = true) @PathVariable String rolename) {
-        return CommonResult.success(roleService.findRoleByName(rolename));
-    }
+//    @GetMapping(path = "/uc/role/findRoleByName/{rolename}")
+//    @ApiOperation(value = "根据角色名查询角色")
+//    public CommonResult<TbRolePO> findRoleByName(@ApiParam(name = "rolename", value = "角色名", required = true) @PathVariable String rolename) {
+//        return CommonResult.success(roleService.findRoleByName(rolename));
+//    }
 
     @GetMapping(path = "/uc/role/findRoleById/{id}")
     @ApiOperation(value = "根据角色id查询角色")
@@ -66,23 +67,23 @@ public class RoleController {
         return CommonResult.success(roleService.findRoleById(id));
     }
 
-    @GetMapping(path = "/uc/role/findRolesByParentId/{parentId}")
-    @ApiOperation(value = "根据角色父id查询所有角色")
-    public CommonResult<List<TbRolePO>> findRolesByParentId(@ApiParam(name = "parentId", value = "父id", required = true) @PathVariable Integer parentId) {
-        return CommonResult.success(roleService.findRolesByParentId(parentId));
-    }
+//    @GetMapping(path = "/uc/role/findRolesByParentId/{parentId}")
+//    @ApiOperation(value = "根据角色父id查询所有角色")
+//    public CommonResult<List<TbRolePO>> findRolesByParentId(@ApiParam(name = "parentId", value = "父id", required = true) @PathVariable Integer parentId) {
+//        return CommonResult.success(roleService.findRolesByParentId(parentId));
+//    }
 
-    @GetMapping(path = "/uc/role/findRoleNamesByParentId/{parentId}")
-    @ApiOperation(value = "根据角色父id查询所有角色名")
-    public CommonResult<List<String>> findRoleNamesByParentId(@ApiParam(name = "parentId", value = "父id", required = true) @PathVariable Integer parentId) {
-        return CommonResult.success(roleService.findRoleNamesByParentId(parentId));
-    }
+//    @GetMapping(path = "/uc/role/findRoleNamesByParentId/{parentId}")
+//    @ApiOperation(value = "根据角色父id查询所有角色名")
+//    public CommonResult<List<String>> findRoleNamesByParentId(@ApiParam(name = "parentId", value = "父id", required = true) @PathVariable Integer parentId) {
+//        return CommonResult.success(roleService.findRoleNamesByParentId(parentId));
+//    }
 
-    @PostMapping(path = "/uc/role/findRolesByFactor")
-    @ApiOperation(value = "根据条件查询角色")
-    public CommonResult<List<TbRolePO>> findRolesByFactor(@ApiParam(name = "searchFactorVO", value = "筛选信息", required = true) @RequestBody SearchFactorVO searchFactorVO) {
-        return CommonResult.success(roleService.findRolesByFactor(searchFactorVO));
-    }
+//    @PostMapping(path = "/uc/role/findRolesByFactor")
+//    @ApiOperation(value = "根据条件查询角色")
+//    public CommonResult<List<TbRolePO>> findRolesByFactor(@ApiParam(name = "searchFactorVO", value = "筛选信息", required = true) @RequestBody SearchFactorVO searchFactorVO) {
+//        return CommonResult.success(roleService.findRolesByFactor(searchFactorVO));
+//    }
 
     /**
      * 添加

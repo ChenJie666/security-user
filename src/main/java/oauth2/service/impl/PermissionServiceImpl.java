@@ -5,15 +5,18 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.jsonwebtoken.lang.Assert;
+import oauth2.dao.AdministratorMapper;
 import oauth2.dao.PermissionMapper;
-import oauth2.entities.jpa.TbPermission;
 import oauth2.entities.po.ObjListPO;
 import oauth2.entities.SearchFactorVO;
 import oauth2.entities.po.TbPermissionPO;
+import oauth2.entities.po.TbUserPO;
 import oauth2.service.PermissionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -26,26 +29,42 @@ import java.util.stream.Collectors;
 @Service
 public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,TbPermissionPO> implements PermissionService {
 
+    @Resource
+    private PermissionMapper permissionMapper;
+
+//    @Override
+//    public ObjListPO<TbPermissionPO> findAllPermissions(Integer pageCurrent,Integer pageSize) {
+//        QueryWrapper<TbPermissionPO> tbPermissionPOQueryWrapper = new QueryWrapper<>();
+//        IPage<TbPermissionPO> tbPermissionPOIPage = baseMapper.selectPage(new Page<>(pageCurrent, pageSize), tbPermissionPOQueryWrapper);
+//
+//        Assert.notEmpty(tbPermissionPOIPage.getRecords(), HttpStatus.NOT_FOUND.toString());
+//
+//        return new ObjListPO<>(tbPermissionPOIPage.getCurrent(), tbPermissionPOIPage.getSize(), tbPermissionPOIPage.getPages(), tbPermissionPOIPage.getTotal(), tbPermissionPOIPage.getRecords());
+//    }
+
     @Override
-    public ObjListPO<TbPermissionPO> findAllPermissions(Integer pageCurrent,Integer pageSize) {
+    public List<TbPermissionPO> findAllPermissions() {
         QueryWrapper<TbPermissionPO> tbPermissionPOQueryWrapper = new QueryWrapper<>();
-        IPage<TbPermissionPO> tbPermissionPOIPage = baseMapper.selectPage(new Page<>(pageCurrent, pageSize), tbPermissionPOQueryWrapper);
+        tbPermissionPOQueryWrapper.eq("parent_id", 0);
+        List<TbPermissionPO> tbPermissionPOs = baseMapper.selectList(tbPermissionPOQueryWrapper);
 
-        Assert.notEmpty(tbPermissionPOIPage.getRecords(), HttpStatus.NOT_FOUND.toString());
+        Assert.notEmpty(tbPermissionPOs, HttpStatus.NOT_FOUND.toString());
 
-        return new ObjListPO<>(tbPermissionPOIPage.getCurrent(), tbPermissionPOIPage.getSize(), tbPermissionPOIPage.getPages(), tbPermissionPOIPage.getTotal(), tbPermissionPOIPage.getRecords());
+        tbPermissionPOs.forEach(this::findChildren);
+
+        return tbPermissionPOs;
     }
 
     @Override
-    public TbPermissionPO findAllPermissions(Integer permissionId) {
-        TbPermissionPO tbPermissionPO = baseMapper.selectById(permissionId);
-
-        Assert.notNull(tbPermissionPO, HttpStatus.NOT_FOUND.toString());
-
-        findChildren(tbPermissionPO);
-
-        return tbPermissionPO;
+    public List<TbPermissionPO> findMyPermissions(Integer userId){
+        List<TbPermissionPO> permissions = permissionMapper.getPermissions(userId);
+        Assert.notEmpty(permissions, HttpStatus.NOT_FOUND.toString());
+        permissions.forEach(this::findChildren);
+        return permissions;
     }
+
+    @Resource
+    private AdministratorMapper administratorMapper;
 
     private void findChildren(TbPermissionPO tbPermissionPO){
         System.out.println("*****tbPermissionPO" + tbPermissionPO);
@@ -58,6 +77,22 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,TbPermis
         } else {
             tbPermissionPOs = null;
         }
+
+        // 查询创建更新者的用户名
+        if (!Objects.isNull(tbPermissionPO.getCreatorId())) {
+            String creator = administratorMapper.getUsernameById(tbPermissionPO.getCreatorId());
+            tbPermissionPO.setCreatorName(creator);
+
+            if(!Objects.isNull(tbPermissionPO.getUpdaterId())) {
+                if (tbPermissionPO.getCreatorId().equals(tbPermissionPO.getUpdaterId())) {
+                    tbPermissionPO.setUpdaterName(creator);
+                } else {
+                    String updater = administratorMapper.getUsernameById(tbPermissionPO.getUpdaterId());
+                    tbPermissionPO.setUpdaterName(updater);
+                }
+            }
+        }
+
         tbPermissionPO.setChildren(tbPermissionPOs);
     }
 
@@ -123,6 +158,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,TbPermis
      */
     @Override
     public void addPermission(TbPermissionPO tbPermissionPO) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        int userId = Integer.parseInt(name);
+        tbPermissionPO.setCreatorId(userId).setUpdaterId(userId);
         int insert = baseMapper.insert(tbPermissionPO);
         Assert.isTrue(insert>0,"权限添加失败");
     }
@@ -132,6 +170,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper,TbPermis
      */
     @Override
     public void updatePermission(TbPermissionPO tbPermissionPO) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        int userId = Integer.parseInt(name);
+        tbPermissionPO.setUpdaterId(userId);
         int update = baseMapper.updateById(tbPermissionPO);
         Assert.isTrue(update>0,"权限修改失败");
     }

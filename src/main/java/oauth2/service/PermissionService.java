@@ -18,9 +18,11 @@ public interface PermissionService extends IService<TbPermissionPO> {
      * 查询所有权限信息
      * @return
      */
-    ObjListPO<TbPermissionPO> findAllPermissions(Integer pageCurrent, Integer pageSize);
+//    ObjListPO<TbPermissionPO> findAllPermissions(Integer pageCurrent, Integer pageSize);
 
-    TbPermissionPO findAllPermissions(Integer permissionId);
+    List<TbPermissionPO> findAllPermissions();
+
+    List<TbPermissionPO> findMyPermissions(Integer userId);
 
     /**
      * 查询所有权限名
@@ -79,5 +81,4 @@ public interface PermissionService extends IService<TbPermissionPO> {
      * @return
      */
     void deletePermission(Integer permissionId);
-
 }

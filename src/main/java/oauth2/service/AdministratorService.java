@@ -7,6 +7,7 @@ import oauth2.entities.po.TbRolePO;
 import oauth2.entities.po.TbUserPO;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Description:
@@ -16,10 +17,12 @@ import java.util.List;
 public interface AdministratorService extends IService<TbUserPO> {
 
     /**
-     * 查询所有用户信息
+     * 查询用户信息
      * @return
      */
-    ObjListPO<TbUserPO> findAllUsers(Integer pageCurrent, Integer pageSize);
+    TbUserPO findMyUsers(Integer userId);
+
+    Set<Integer> findMyUsersList(Integer userId);
 
     /**
      * 查询所有用户名

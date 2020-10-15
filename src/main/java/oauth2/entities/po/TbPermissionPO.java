@@ -42,6 +42,17 @@ public class TbPermissionPO implements Serializable {
     @ApiModelProperty(value = "修改时间",hidden = true)
     private Date updated;
 
+    @ApiModelProperty(value = "创建者id",hidden = true)
+    private Integer creatorId;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "创建者名称",hidden = true)
+    private String creatorName;
+    @ApiModelProperty(value = "修改者id",hidden = true)
+    private Integer updaterId;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "修改者名称",hidden = true)
+    private String updaterName;
+
     @TableField(exist = false)
     @ApiModelProperty(value = "子列表",hidden = true)
     private List<TbPermissionPO> children;

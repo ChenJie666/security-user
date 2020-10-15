@@ -23,10 +23,11 @@ public class TbPermission {
     private String url;
     private String description;
     @Temporal(value = TemporalType.TIMESTAMP)
-    @Column(nullable = false)
     private Date created;
     @Temporal(value = TemporalType.TIMESTAMP)
-    @Column(nullable = false)
     private Date updated;
+
+    private String creatorId;
+    private String updaterId;
 
 }

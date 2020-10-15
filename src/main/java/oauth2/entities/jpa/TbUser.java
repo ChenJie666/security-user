@@ -1,6 +1,7 @@
 package oauth2.entities.jpa;
 
 import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -19,6 +20,8 @@ public class TbUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Column(nullable = false)
+    private Long parent_id;
     @Column(unique = true,nullable = false)
     private String username;
     @Column(nullable = false)
@@ -34,10 +37,11 @@ public class TbUser {
     @Column(columnDefinition = "tinyint DEFAULT 1 COMMENT '账户是否可用'")
     private Boolean enabled;
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
     private Date created;
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
     private Date updated;
+
+    private String creatorId;
+    private String updaterId;
 
 }

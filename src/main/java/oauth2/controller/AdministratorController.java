@@ -4,11 +4,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import oauth2.entities.*;
-import oauth2.entities.po.ObjListPO;
 import oauth2.entities.po.TbUserPO;
 import oauth2.service.*;
 import oauth2.utils.CommonResult;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -33,26 +33,25 @@ public class AdministratorController {
     /**
      * 查询
      */
-    @GetMapping(path = "/uc/administrator/findAllUsers")
-    @ApiOperation(value = "查询所有的管理员")
-    public CommonResult<ObjListPO<TbUserPO>> findAllUsers(@ApiParam(name = "page", value = "查询的页数", required = true)
-                                                          @RequestParam Integer page,
-                                                          @ApiParam(name = "pageSize", value = "每页的记录数", required = true)
-                                                          @RequestParam Integer pageSize) {
-        return CommonResult.success(adminService.findAllUsers(page, pageSize));
+    @GetMapping(path = "/uc/administrator/findMyUsers")
+    @ApiOperation(value = "查询该用户和其子用户")
+    public CommonResult<TbUserPO> findMyUsers() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return CommonResult.success(adminService.findMyUsers(Integer.parseInt(userId)));
     }
 
-    @GetMapping(path = "/uc/administrator/findAllNames")
-    @ApiOperation(value = "查询所有的管理员名")
-    public CommonResult<List<String>> findAllNames() {
-        return CommonResult.success(adminService.findAllUserNames());
-    }
+//    @GetMapping(path = "/uc/administrator/findAllNames")
+//    @ApiOperation(value = "查询所有的管理员名")
+//    public CommonResult<List<String>> findAllNames() {
+//        return CommonResult.success(adminService.findAllUserNames());
+//    }
 
-    @GetMapping(path = "/uc/administrator/findUserByName/{username}")
-    @ApiOperation(value = "根据管理员名查询管理员")
-    public CommonResult<TbUserPO> findUserByName(@ApiParam(name = "username", value = "用户名", required = true) @PathVariable String username) {
-        return CommonResult.success(adminService.findUserByName(username));
-    }
+//    @GetMapping(path = "/uc/administrator/findUserByName/{username}")
+//    @ApiOperation(value = "根据管理员名查询管理员")
+//    public CommonResult<TbUserPO> findUserByName(@ApiParam(name = "username", value = "用户名", required = true) @PathVariable String username) {
+//        return CommonResult.success(adminService.findUserByName(username));
+//    }
 
     @GetMapping(path = "/uc/administrator/findUserById/{id}")
     @ApiOperation(value = "根据管理员id查询管理员")
@@ -60,11 +59,11 @@ public class AdministratorController {
         return CommonResult.success(adminService.findUserById(id));
     }
 
-    @PostMapping(path = "/uc/administrator/findUsersByFactor")
-    @ApiOperation(value = "根据条件查询管理员")
-    public CommonResult<List<TbUserPO>> findUsersByFactor(@ApiParam(name = "searchFactorVO", value = "筛选信息", required = true) @RequestBody SearchFactorVO searchFactorVO) {
-        return CommonResult.success(adminService.findUsersByFactor(searchFactorVO));
-    }
+//    @PostMapping(path = "/uc/administrator/findUsersByFactor")
+//    @ApiOperation(value = "根据条件查询管理员")
+//    public CommonResult<List<TbUserPO>> findUsersByFactor(@ApiParam(name = "searchFactorVO", value = "筛选信息", required = true) @RequestBody SearchFactorVO searchFactorVO) {
+//        return CommonResult.success(adminService.findUsersByFactor(searchFactorVO));
+//    }
 
     /**
      * 添加

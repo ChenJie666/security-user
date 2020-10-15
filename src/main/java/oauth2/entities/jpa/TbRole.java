@@ -28,4 +28,7 @@ public class TbRole {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    private String creatorId;
+    private String updaterId;
+
 }
