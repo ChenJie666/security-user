@@ -20,21 +20,19 @@ public interface AdministratorService extends IService<TbUserPO> {
      * 查询用户信息
      * @return
      */
-    TbUserPO findMyUsers(Integer userId);
-
-    Set<Integer> findMyUsersList(Integer userId);
+    Set<Integer> findBranchUserIdsByUserId(Integer userId);
 
     /**
      * 查询所有用户名
      * @return
      */
-    List<String> findAllUserNames();
+//    List<String> findAllUserNames();
 
     /**
      * 根据用户名查询用户
      * @return
      */
-    TbUserPO findUserByName(String username);
+//    TbUserPO findUserByName(String username);
 
     /**
      * 根据用户id查询用户
@@ -47,7 +45,7 @@ public interface AdministratorService extends IService<TbUserPO> {
      * @param searchFactorVO
      * @return
      */
-    List<TbUserPO> findUsersByFactor(SearchFactorVO searchFactorVO);
+//    List<TbUserPO> findUsersByFactor(SearchFactorVO searchFactorVO);
 
     /**
      * 添加管理员
@@ -62,6 +60,8 @@ public interface AdministratorService extends IService<TbUserPO> {
     void updateAdministrator(TbUserPO tbAdministratorPO);
 
     void enableAdministrator(Integer userId);
+
+    void changeParentId(Integer userId,Integer parentId);
 
     /**
      * 删除管理员

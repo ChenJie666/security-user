@@ -112,8 +112,12 @@ public class TbUserPO implements Serializable {
     /**
      * 子列表
      */
+//    @TableField(exist = false)
+//    @ApiModelProperty(value = "子列表",hidden = true)
+//    private List<TbUserPO> children;
+
     @TableField(exist = false)
-    @ApiModelProperty(value = "子列表",hidden = true)
-    private List<TbUserPO> children;
+    @ApiModelProperty(value = "是否是分支", hidden = true)
+    private Boolean isBranch;
 
 }

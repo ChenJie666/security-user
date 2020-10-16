@@ -7,6 +7,7 @@ import oauth2.dao.AdministratorMapper;
 import oauth2.entities.SearchFactorVO;
 import oauth2.entities.po.TbUserPO;
 import oauth2.service.AdministratorService;
+import oauth2.service.DepartmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,95 +24,98 @@ import java.util.stream.Collectors;
 @Service
 public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, TbUserPO> implements AdministratorService {
 
-    @Override
-    public TbUserPO findMyUsers(Integer userId) {
-        TbUserPO tbUserPO = baseMapper.selectById(userId);
-        Assert.notNull(tbUserPO, HttpStatus.NOT_FOUND.toString());
-
-        findChildren(tbUserPO);
-
-        return tbUserPO;
-    }
-
-    @Override
-    public Set<Integer> findMyUsersList(Integer userId) {
-        TbUserPO tbUserPO = baseMapper.selectById(userId);
-
-        // 查找所有子用户的id
-        HashSet<Integer> userIds = new HashSet<>(Collections.emptySet());
-        findChildren(tbUserPO, userIds);
-        System.out.println("*****userIds" + userIds);
-
-        return userIds;
-    }
+//    @Override
+//    public TbUserPO findMyUsers(Integer userId) {
+//        TbUserPO tbUserPO = baseMapper.selectById(userId);
+//        Assert.notNull(tbUserPO, HttpStatus.NOT_FOUND.toString());
+//
+//        findChildren(tbUserPO);
+//
+//        return tbUserPO;
+//    }
 
     @Resource
-    private AdministratorMapper administratorMapper;
-
-    private void findChildren(TbUserPO tbUserPO) {
-        tbUserPO.setPassword(null);
-        System.out.println("*****findChildren:" + tbUserPO);
-        QueryWrapper<TbUserPO> tbRolePOQueryWrapper = new QueryWrapper<>();
-        tbRolePOQueryWrapper.eq("parent_id", tbUserPO.getId()).ne("id", 0);
-        List<TbUserPO> tbRolePOs = baseMapper.selectList(tbRolePOQueryWrapper);
-        if (!Objects.isNull(tbRolePOs) && !tbRolePOs.isEmpty()) {
-            tbRolePOs.forEach(this::findChildren);
-        } else {
-            tbRolePOs = null;
-        }
-
-        // 查询创建更新者的用户名
-        if (!Objects.isNull(tbUserPO.getCreatorId())) {
-            String creator = administratorMapper.getUsernameById(tbUserPO.getCreatorId());
-            tbUserPO.setCreatorName(creator);
-
-            if(!Objects.isNull(tbUserPO.getUpdaterId())) {
-                if (tbUserPO.getCreatorId().equals(tbUserPO.getUpdaterId())) {
-                    tbUserPO.setUpdaterName(creator);
-                } else {
-                    String updater = administratorMapper.getUsernameById(tbUserPO.getUpdaterId());
-                    tbUserPO.setUpdaterName(updater);
-                }
-            }
-        }
-
-        tbUserPO.setChildren(tbRolePOs);
-    }
-
-    private void findChildren(TbUserPO tbUserPO, Set<Integer> userIds) {
-        System.out.println("*****findChildren:" + tbUserPO);
-        QueryWrapper<TbUserPO> tbRolePOQueryWrapper = new QueryWrapper<>();
-        tbRolePOQueryWrapper.eq("parent_id", tbUserPO.getId()).ne("id", 0);
-        List<TbUserPO> tbUserPOs = baseMapper.selectList(tbRolePOQueryWrapper);
-        if (!Objects.isNull(tbUserPOs) && !tbUserPOs.isEmpty()) {
-            tbUserPOs.forEach(user -> this.findChildren(user, userIds));
-        } else {
-            tbUserPOs = null;
-        }
-        tbUserPO.setChildren(tbUserPOs);
-        userIds.add(tbUserPO.getId());
-    }
+    private DepartmentService departmentService;
 
     @Override
-    public List<String> findAllUserNames() {
+    public Set<Integer> findBranchUserIdsByUserId(Integer userId) {
+        Set<Integer> departmentIds = departmentService.findBranchDepartmentIdsByUserId(userId);
+
+        // 查找所有子用户的id
         QueryWrapper<TbUserPO> tbUserPOQueryWrapper = new QueryWrapper<>();
-        List<TbUserPO> users = baseMapper.selectList(tbUserPOQueryWrapper.select("username"));
+        tbUserPOQueryWrapper.in("parent_id", departmentIds);
+        List<TbUserPO> tbUserPOS = baseMapper.selectList(tbUserPOQueryWrapper);
 
-        Assert.notEmpty(users, HttpStatus.NOT_FOUND.toString());
-
-        return users.stream().map(TbUserPO::getUsername).collect(Collectors.toList());
+        return tbUserPOS.stream().map(TbUserPO::getId).collect(Collectors.toSet());
     }
 
-    @Override
-    public TbUserPO findUserByName(String username) {
-        QueryWrapper<TbUserPO> tbUserPOQueryWrapper = new QueryWrapper<>();
-        tbUserPOQueryWrapper.eq("username", username);
-        TbUserPO tbUserPO = baseMapper.selectOne(tbUserPOQueryWrapper);
+//    @Resource
+//    private AdministratorMapper administratorMapper;
 
-        Assert.notNull(tbUserPO, HttpStatus.NOT_FOUND.toString());
+//    private void findChildren(TbUserPO tbUserPO) {
+//        tbUserPO.setPassword(null);
+//        System.out.println("*****findChildren:" + tbUserPO);
+//        QueryWrapper<TbUserPO> tbRolePOQueryWrapper = new QueryWrapper<>();
+//        tbRolePOQueryWrapper.eq("parent_id", tbUserPO.getId()).ne("id", 0);
+//        List<TbUserPO> tbRolePOs = baseMapper.selectList(tbRolePOQueryWrapper);
+//        if (!Objects.isNull(tbRolePOs) && !tbRolePOs.isEmpty()) {
+//            tbRolePOs.forEach(this::findChildren);
+//        } else {
+//            tbRolePOs = null;
+//        }
+//
+//        // 查询创建更新者的用户名
+//        if (!Objects.isNull(tbUserPO.getCreatorId())) {
+//            String creator = administratorMapper.getUsernameById(tbUserPO.getCreatorId());
+//            tbUserPO.setCreatorName(creator);
+//
+//            if(!Objects.isNull(tbUserPO.getUpdaterId())) {
+//                if (tbUserPO.getCreatorId().equals(tbUserPO.getUpdaterId())) {
+//                    tbUserPO.setUpdaterName(creator);
+//                } else {
+//                    String updater = administratorMapper.getUsernameById(tbUserPO.getUpdaterId());
+//                    tbUserPO.setUpdaterName(updater);
+//                }
+//            }
+//        }
+//
+//        tbUserPO.setChildren(tbRolePOs);
+//    }
 
-        return tbUserPO;
-    }
+//    private void findChildren(TbUserPO tbUserPO, Set<Integer> userIds) {
+//        System.out.println("*****findChildren:" + tbUserPO);
+//        QueryWrapper<TbUserPO> tbRolePOQueryWrapper = new QueryWrapper<>();
+//        tbRolePOQueryWrapper.eq("parent_id", tbUserPO.getId()).ne("id", 0);
+//        List<TbUserPO> tbUserPOs = baseMapper.selectList(tbRolePOQueryWrapper);
+//        if (!Objects.isNull(tbUserPOs) && !tbUserPOs.isEmpty()) {
+//            tbUserPOs.forEach(user -> this.findChildren(user, userIds));
+//        } else {
+//            tbUserPOs = null;
+//        }
+//        tbUserPO.setChildren(tbUserPOs);
+//        userIds.add(tbUserPO.getId());
+//    }
+
+//    @Override
+//    public List<String> findAllUserNames() {
+//        QueryWrapper<TbUserPO> tbUserPOQueryWrapper = new QueryWrapper<>();
+//        List<TbUserPO> users = baseMapper.selectList(tbUserPOQueryWrapper.select("username"));
+//
+//        Assert.notEmpty(users, HttpStatus.NOT_FOUND.toString());
+//
+//        return users.stream().map(TbUserPO::getUsername).collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public TbUserPO findUserByName(String username) {
+//        QueryWrapper<TbUserPO> tbUserPOQueryWrapper = new QueryWrapper<>();
+//        tbUserPOQueryWrapper.eq("username", username);
+//        TbUserPO tbUserPO = baseMapper.selectOne(tbUserPOQueryWrapper);
+//
+//        Assert.notNull(tbUserPO, HttpStatus.NOT_FOUND.toString());
+//
+//        return tbUserPO;
+//    }
 
     @Override
     public TbUserPO findUserById(Integer id) {
@@ -122,12 +126,12 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
         return tbUserPO;
     }
 
-    @Override
-    public List<TbUserPO> findUsersByFactor(SearchFactorVO searchFactorVO) {
-        // TODO
-
-        return null;
-    }
+//    @Override
+//    public List<TbUserPO> findUsersByFactor(SearchFactorVO searchFactorVO) {
+//        // TODO
+//
+//        return null;
+//    }
 
     /**
      * 添加
@@ -149,8 +153,8 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         int userId = Integer.parseInt(name);
         tbAdministratorPO.setUpdaterId(userId);
-        //不能修改用户的有效性
-        tbAdministratorPO.setPassword(null).setAccountNonExpired(null).setAccountNonLocked(null).setCredentialsNonExpired(null).setEnabled(null);
+        //不能修改用户的密码，有效性和层级关系
+        tbAdministratorPO.setPassword(null).setParentId(null).setAccountNonExpired(null).setAccountNonLocked(null).setCredentialsNonExpired(null).setEnabled(null);
         int update = baseMapper.updateById(tbAdministratorPO);
         Assert.isTrue(update > 0, "更新管理员失败");
     }
@@ -161,6 +165,12 @@ public class AdministratorServiceImpl extends ServiceImpl<AdministratorMapper, T
         Boolean enabled = tbUserPO.getEnabled();
         int update = baseMapper.updateById(new TbUserPO().setId(userId).setEnabled(!enabled));
         Assert.isTrue(update > 0, "管理员有效性更改失败");
+    }
+
+    @Override
+    public void changeParentId(Integer userId,Integer parentId) {
+        int update = baseMapper.updateById(new TbUserPO().setParentId(parentId));
+        Assert.isTrue(update > 0, "管理员部门修改失败");
     }
 
     /**

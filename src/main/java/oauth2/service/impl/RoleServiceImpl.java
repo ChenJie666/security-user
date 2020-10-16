@@ -65,9 +65,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, TbRolePO> implement
     @Override
     public List<TbRolePO> findMyRoles(Integer userId){
         // 查找所有的子用户
-        Set<Integer> myUserIdsList = administratorService.findMyUsersList(userId);
+        Set<Integer> branchUserIds = administratorService.findBranchUserIdsByUserId(userId);
+        branchUserIds.add(userId);
         // 查找自己和子用户所拥有的角色
-        List<TbRolePO> tbRolePOs = roleMapper.findMyRoles(myUserIdsList);
+        List<TbRolePO> tbRolePOs = roleMapper.findMyRoles(branchUserIds);
 
         Assert.notEmpty(tbRolePOs,HttpStatus.NOT_FOUND.toString());
 
