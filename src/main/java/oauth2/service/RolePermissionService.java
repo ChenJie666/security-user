@@ -19,4 +19,5 @@ public interface RolePermissionService extends IService<TbRolePermissionPO> {
 
     void deletePermissions(List<Integer> bindIds);
 
+    void deletePermissionsByRoleId(Integer roleId);
 }

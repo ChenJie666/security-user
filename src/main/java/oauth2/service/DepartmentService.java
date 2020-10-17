@@ -3,6 +3,7 @@ package oauth2.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import oauth2.entities.po.DepartmentPO;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Set;
  */
 public interface DepartmentService extends IService<DepartmentPO> {
 
-    DepartmentPO findAllDepartments(Integer userId);
+    List<DepartmentPO> findAllDepartments(Integer userId);
 
     Set<Integer> findBranchDepartmentIdsByUserId(int userid);
 

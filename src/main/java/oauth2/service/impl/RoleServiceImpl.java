@@ -8,12 +8,15 @@ import oauth2.dao.RoleMapper;
 import oauth2.entities.SearchFactorVO;
 import oauth2.entities.po.TbRolePO;
 import oauth2.service.AdministratorService;
+import oauth2.service.RolePermissionService;
 import oauth2.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -59,18 +62,19 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, TbRolePO> implement
 
     /**
      * 查找自己和子用户拥有的角色
+     *
      * @param userId
      * @return
      */
     @Override
-    public List<TbRolePO> findMyRoles(Integer userId){
+    public List<TbRolePO> findMyRoles(Integer userId) {
         // 查找所有的子用户
         Set<Integer> branchUserIds = administratorService.findBranchUserIdsByUserId(userId);
         branchUserIds.add(userId);
         // 查找自己和子用户所拥有的角色
         List<TbRolePO> tbRolePOs = roleMapper.findMyRoles(branchUserIds);
 
-        Assert.notEmpty(tbRolePOs,HttpStatus.NOT_FOUND.toString());
+        Assert.notEmpty(tbRolePOs, HttpStatus.NOT_FOUND.toString());
 
         tbRolePOs.forEach(tbRolePO -> {
             // 查询创建更新者的用户名
@@ -78,7 +82,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, TbRolePO> implement
                 String creator = administratorMapper.getUsernameById(tbRolePO.getCreatorId());
                 tbRolePO.setCreatorName(creator);
 
-                if(!Objects.isNull(tbRolePO.getUpdaterId())) {
+                if (!Objects.isNull(tbRolePO.getUpdaterId())) {
                     if (tbRolePO.getCreatorId().equals(tbRolePO.getUpdaterId())) {
                         tbRolePO.setUpdaterName(creator);
                     } else {
@@ -164,7 +168,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, TbRolePO> implement
     }
 
     /**
-     * 查询
+     * 添加
      */
     @Override
     public void addRole(TbRolePO tbRolePO) {
@@ -175,6 +179,31 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, TbRolePO> implement
         Assert.isTrue(insert > 0, "添加角色失败");
     }
 
+    @Resource
+    private RolePermissionService rolePermissionService;
+
+    @Override
+    @Transactional
+    public void addRole(TbRolePO tbRolePO, List<Integer> permissionIds) {
+        // TODO 手动回滚，并抛出异常
+
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        int userId = Integer.parseInt(name);
+        tbRolePO.setCreatorId(userId).setUpdaterId(userId);
+
+        try {
+            int insert = baseMapper.insert(tbRolePO);
+            Assert.isTrue(insert > 0, "添加角色失败");
+
+            rolePermissionService.addPermissions(tbRolePO.getId(), permissionIds);
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            e.printStackTrace();
+            throw new IllegalArgumentException("添加角色失败(@Transactional异常)");
+        }
+
+    }
+
     /**
      * 更新
      */
@@ -182,9 +211,29 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, TbRolePO> implement
     public void updateRole(TbRolePO tbRolePO) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         int userId = Integer.parseInt(name);
-        tbRolePO.setUpdaterId(userId);
+        tbRolePO.setParentId(null).setUpdaterId(userId);
         int update = baseMapper.updateById(tbRolePO);
         Assert.isTrue(update > 0, "更新角色失败");
+    }
+
+    @Override
+    @Transactional
+    public void updateRole(TbRolePO tbRolePO, List<Integer> permissionId) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        int userId = Integer.parseInt(name);
+        // 先更新角色表
+        tbRolePO.setParentId(null).setUpdaterId(userId);
+        int update = baseMapper.updateById(tbRolePO);
+        Assert.isTrue(update > 0, "更新角色失败");
+        // 再更新角色权限关系表。需要先把原来的关系删除，在添加新的关系。
+        try {
+            rolePermissionService.deletePermissionsByRoleId(tbRolePO.getId());
+            rolePermissionService.addPermissions(tbRolePO.getId(), permissionId);
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            e.printStackTrace();
+            throw new IllegalArgumentException("修改角色失败(@Transactional异常)");
+        }
     }
 
     /**

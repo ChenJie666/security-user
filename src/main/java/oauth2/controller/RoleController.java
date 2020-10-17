@@ -40,9 +40,8 @@ public class RoleController {
 //                                                          @RequestParam Integer pageSize) {
 //        return CommonResult.success(roleService.findAllRoles(page, pageSize));
 //    }
-
     @GetMapping(path = "/uc/role/findMyRoles")
-    @ApiOperation(value = "查询该用户和子用户的所有角色")
+    @ApiOperation(value = "查询该用户和其子用户所拥有角色")
     public CommonResult<List<TbRolePO>> findMyRoles() {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -90,9 +89,13 @@ public class RoleController {
      */
     @PostMapping(path = "/uc/role/addRole")
     @ApiOperation(value = "添加角色")
-    public CommonResult<String> addRole(@ApiParam(name = "tbRolePO", value = "角色对象", required = true) @RequestBody TbRolePO tbRolePO) {
+    public CommonResult<String> addRole(@ApiParam(name = "tbRolePO", value = "角色对象", required = true)
+                                        @RequestBody TbRolePO tbRolePO,
+                                        @ApiParam(name = "permissionIds", value = "权限id列表", required = true)
+                                        @RequestBody List<Integer> permissionIds) {
+
         System.out.println("*****tbRolePO:" + tbRolePO);
-        roleService.addRole(tbRolePO);
+        roleService.addRole(tbRolePO, permissionIds);
         return CommonResult.success("角色添加成功");
     }
 
@@ -107,12 +110,14 @@ public class RoleController {
      */
     @PostMapping(path = "/uc/role/updateRole")
     @ApiOperation(value = "更新角色")
-    public CommonResult<String> updateRole(@ApiParam(name = "tbRolePO", value = "角色对象", required = true) @RequestBody TbRolePO tbRolePO) {
-        System.out.println("*****tbRolePO:" + tbRolePO);
-        roleService.updateRole(tbRolePO);
+    public CommonResult<String> updateRole(@ApiParam(name = "tbRolePO", value = "角色对象", required = true)
+                                           @RequestBody TbRolePO tbRolePO,
+                                           @ApiParam(name = "permissionIds", value = "权限id列表", required = true)
+                                           @RequestBody List<Integer> permissionIds) {
+        roleService.updateRole(tbRolePO, permissionIds);
 
         // 异步添加到过期列表
-        new Thread(new FutureTask<>(()->{
+        new Thread(new FutureTask<>(() -> {
             List<Integer> userIds = expiredTokenService.getUserIdsByRoles(Collections.singletonList(tbRolePO.getId()));
             userIds.forEach((administratorId) -> {
                 rabbitTemplate.convertAndSend("ExpiredTokenExchange", "expiredToken.addExpiredToken", Arrays.asList(administratorId, System.currentTimeMillis() / 1000));
@@ -132,7 +137,7 @@ public class RoleController {
         roleService.deleteRole(roleId);
 
         // 异步添加到过期列表
-        new Thread(new FutureTask<>(()->{
+        new Thread(new FutureTask<>(() -> {
             List<Integer> userIds = expiredTokenService.getUserIdsByRoles(Collections.singletonList(roleId));
             userIds.forEach((administratorId) -> {
                 rabbitTemplate.convertAndSend("ExpiredTokenExchange", "expiredToken.addExpiredToken", Arrays.asList(administratorId, System.currentTimeMillis() / 1000));

@@ -51,8 +51,8 @@ public class TbRolePO implements Serializable {
     @ApiModelProperty(value = "修改者名称",hidden = true)
     private String updaterName;
 
-    @TableField(exist = false)
-    @ApiModelProperty(value = "子列表",hidden = true)
-    private List<TbRolePO> children;
+//    @TableField(exist = false)
+//    @ApiModelProperty(value = "子列表",hidden = true)
+//    private List<TbRolePO> children;
 
 }
