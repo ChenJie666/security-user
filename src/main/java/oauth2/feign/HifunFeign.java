@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
  * @Author: CJ
  * @Data: 2020/9/10 9:26
  */
-@FeignClient(name = "hifun-feign", url = "http://192.168.32.234:44440")
-//@FeignClient(name = "hifun-service-user")
+//@FeignClient(name = "hifun-feign", url = "http://192.168.32.234:44440")
+@FeignClient(name = "hifun-service-user")
 public interface HifunFeign {
 
     /**
