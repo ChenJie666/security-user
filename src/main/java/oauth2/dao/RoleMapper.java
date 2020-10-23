@@ -29,4 +29,11 @@ public interface RoleMapper extends BaseMapper<TbRolePO> {
             "</script>")
     List<TbRolePO> findMyRoles(@Param("userIds") Set<Integer> userIds);
 
+    @Select("SELECT r.* " +
+            "FROM tb_user u " +
+            "LEFT JOIN tb_user_role ur ON u.id = ur.user_id " +
+            "LEFT JOIN tb_role r ON ur.role_id = r.id " +
+            "WHERE u.id = #{userId};")
+    List<TbRolePO> findRolesByUserId(@Param("userId") Integer userId);
+
 }

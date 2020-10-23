@@ -53,6 +53,7 @@ public class DepartmentController {
     @ApiOperation(value = "添加部门")
     public CommonResult<String> addDepartment(@ApiParam(name = "departmentPO", value = "部门对象")
                                               @RequestBody DepartmentPO departmentPO) {
+        System.out.println("*****departmentPO:" + departmentPO);
         departmentService.addDepartment(departmentPO);
         return CommonResult.success("添加部门成功");
     }
@@ -64,6 +65,7 @@ public class DepartmentController {
     @ApiOperation(value = "更新部门")
     public CommonResult<String> updateDepartment(@ApiParam(name = "departmentPO", value = "部门对象")
                                                  @RequestBody DepartmentPO departmentPO) {
+        System.out.println("*****departmentPO:" + departmentPO);
         departmentService.updateDepartment(departmentPO);
         return CommonResult.success("更新部门成功");
     }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="true">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <contextName>logback</contextName>
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <springProperty scope="context" name="logstashDestination" source="logstash.destination"/>
+    <springProperty name="rabbitmqHost" source="spring.rabbitmq.host"/>
+    <springProperty name="rabbitmqPort" source="spring.rabbitmq.port"/>
+    <springProperty name="rabbitmqUsername" source="spring.rabbitmq.username"/>
+    <springProperty name="rabbitmqPassword" source="spring.rabbitmq.password"/>
+    <springProperty name="errorToWxworkReceivers" source="errorToWxwork.receivers"/>
+
+    <!-- Logstash -->
+    <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${logstashDestination}</destination>
+        <!-- encoder必须配置,有多种可选 -->
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <pattern>
+                        {
+                        "level": "%level",
+                        "service": "${springAppName:-}",
+                        "trace": "%X{X-B3-TraceId:-}",
+                        "span": "%X{X-B3-SpanId:-}",
+                        "exportable": "%X{X-Span-Export:-}",
+                        "pid": "${PID:-}",
+                        "thread": "%thread",
+                        "class": "%logger",
+                        "stack_trace": "%exception{30}",
+                        "message": "%message"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- 企业微信报警 -->
+    <appender name="wxwork" class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <pattern>
+                        {
+                        "service": "${springAppName:-}",
+                        "receivers": "${errorToWxworkReceivers:-}",
+                        "class": "%logger",
+                        "message": "%message"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+        <host>${rabbitmqHost}</host>
+        <port>${rabbitmqPort:-5672}</port>
+        <username>${rabbitmqUsername}</username>
+        <password>${rabbitmqPassword}</password>
+
+        <declareExchange>false</declareExchange>
+        <exchangeType>direct</exchangeType>
+        <exchangeName>hifun</exchangeName>
+        <routingKeyPattern>hifun.exception.error</routingKeyPattern>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="stash"/>
+        <appender-ref ref="wxwork"/>
+    </root>
+</configuration>

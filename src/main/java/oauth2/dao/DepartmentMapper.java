@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * @Description:
  * @Author: CJ
@@ -14,10 +16,10 @@ import org.springframework.stereotype.Component;
 @Component
 public interface DepartmentMapper extends BaseMapper<DepartmentPO> {
 
-    @Select("SELECT d.level,d.name " +
+    @Select("SELECT d.level as level,d.id as id " +
             "FROM tb_user u " +
             "LEFT JOIN department d ON u.parent_id = d.id " +
             "WHERE u.id = #{userId};")
-    String findLevelByUserId(@Param("userId") int userId);
+    Map<String,Object> findLevelByUserId(@Param("userId") int userId);
 
 }

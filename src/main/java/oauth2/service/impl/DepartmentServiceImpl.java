@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.jsonwebtoken.lang.Assert;
 import oauth2.dao.AdministratorMapper;
 import oauth2.dao.DepartmentMapper;
+import oauth2.dao.RoleMapper;
 import oauth2.entities.po.DepartmentPO;
+import oauth2.entities.po.TbRolePO;
 import oauth2.entities.po.TbUserPO;
 import oauth2.service.DepartmentService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,10 +16,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +46,9 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
 
         String myLevel;
         if (userId != -1) {
-            myLevel = departmentMapper.findLevelByUserId(userId);
+            Map<String, Object> map = departmentMapper.findLevelByUserId(userId);
+            int id = (Integer) map.get("id");
+            myLevel = map.get("level") + "." + id;
         } else {
             myLevel = "-1";
         }
@@ -59,9 +60,12 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         return departmentPOS;
     }
 
+    @Resource
+    private RoleMapper roleMapper;
+
     private void findChildren(DepartmentPO departmentPO, String myLevel, Integer userId) {
         // 判断是否是分支
-        String level = departmentPO.getLevel();
+        String level = departmentPO.getLevel() + "." + departmentPO.getId();
         System.out.println("***myLevel:" + myLevel);
         System.out.println("***level:" + level);
         boolean isBranch = level.startsWith(myLevel) && level.length() > myLevel.length();
@@ -76,6 +80,12 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
             if (tbUserPO.getId().equals(userId)) {
                 tbUserPO.setIsBranch(true);
             }
+
+            //查询用户的角色信息
+            List<TbRolePO> rolesByUserId = roleMapper.findRolesByUserId(userId);
+            tbUserPO.setRolePOs(rolesByUserId);
+
+            //查询creator和updater
             if (!Objects.isNull(tbUserPO.getCreatorId())) {
                 String creator = administratorMapper.getUsernameById(tbUserPO.getCreatorId());
                 tbUserPO.setCreatorName(creator);
@@ -132,7 +142,10 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
     @Override
     public Set<Integer> findBranchDepartmentIdsByUserId(int userId) {
         // 获取用户所在的部门的level
-        String level = departmentMapper.findLevelByUserId(userId);
+        Map<String, Object> map = departmentMapper.findLevelByUserId(userId);
+        int id = (Integer) map.get("id");
+        String level = (String) map.get("level");
+        System.out.println("*****findBranchDepartmentIdsByUserId: " + id + "---" + level);
 
         // 通过该level查询其所有的子部门和员工
         QueryWrapper<DepartmentPO> departmentPOQueryWrapper = new QueryWrapper<>();
@@ -143,16 +156,16 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
     }
 
     @Override
+    @Transactional
     public void addDepartment(DepartmentPO departmentPO) {
         // 获取当前用户用于添加创建更新者
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Integer userId = Integer.parseInt(username);
 
-        Integer id = departmentPO.getId();
         Integer parentId = departmentPO.getParentId();
         String level = baseMapper.selectById(parentId).getLevel();
         // 设置level，创建更新者
-        departmentPO.setLevel(level + "." + id).setCreatorId(userId).setUpdaterId(userId);
+        departmentPO.setLevel(level + "." + parentId).setCreatorId(userId).setUpdaterId(userId);
 
         int insert = baseMapper.insert(departmentPO);
         Assert.isTrue(insert > 0, "部门创建失败");
@@ -184,21 +197,29 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         // 获取新的level
         DepartmentPO departmentPO = baseMapper.selectById(departmentId);
         String oldLevel = departmentPO.getLevel();
-        String parentLevel = oldLevel.substring(0, oldLevel.lastIndexOf("."));
-        DepartmentPO parentDepartmentPO = baseMapper.selectById(parentId);
-        String newLevel = parentDepartmentPO.getLevel();
+        DepartmentPO parentDepratmentPO = baseMapper.selectById(parentId);
+        String newLevel = parentDepratmentPO.getLevel() + "." + parentId;
+
+//        DepartmentPO departmentPO = baseMapper.selectById(departmentId);
+//        String oldLevel = departmentPO.getLevel();
+//        String parentLevel = oldLevel.substring(0, oldLevel.lastIndexOf("."));
+//        DepartmentPO parentDepartmentPO = baseMapper.selectById(parentId);
+//        String newLevel = parentDepartmentPO.getLevel();
 
         // 查询所有的子部门，并修改自己和子部门的parentId和level
         QueryWrapper<DepartmentPO> departmentPOQueryWrapper = new QueryWrapper<>();
         departmentPOQueryWrapper.likeRight("level", oldLevel);
-
         List<DepartmentPO> departmentPOs = baseMapper.selectList(departmentPOQueryWrapper);
+
         try {
             // TODO 对于stream流处理，事务还能生效吗？？？
             departmentPOs.forEach(department -> {
                 String level = department.getLevel();
-                level = newLevel + level.substring(parentLevel.length());
-                department.setParentId(parentId).setLevel(level);
+                level = newLevel + level.substring(oldLevel.length());
+                department.setLevel(level);
+                if(department.getId() == departmentId){
+                    department.setParentId(parentId);
+                }
                 int update = baseMapper.updateById(department);
                 Assert.isTrue(update > 0, "添加角色失败");
             });

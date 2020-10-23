@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -118,5 +119,9 @@ public class TbUserPO implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "是否是分支", hidden = true)
     private Boolean isBranch;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户包含的角色信息",hidden = true)
+    private List<TbRolePO> rolePOs;
 
 }

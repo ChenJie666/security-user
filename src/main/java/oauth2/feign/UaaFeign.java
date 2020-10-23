@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Author: CJ
  * @Data: 2020/8/15 11:51
  */
-@FeignClient("TEST-UAA-CENTER")
+@FeignClient("SECURITY-UAA")
 public interface UaaFeign {
 
     @GetMapping(path = "/feign/uaa/publicKey")

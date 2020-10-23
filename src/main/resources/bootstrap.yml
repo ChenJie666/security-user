@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: TEST-USER-CENTER_LOCAL
+    name: SECURITY-USER
   datasource:
     url: jdbc:mysql://116.62.148.11:3306/uaa_server?useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -57,7 +57,7 @@ eureka:
     service-url:
 #      defaultZone: http://172.16.237.6:8761/eureka   # 火粉eureka
 #      defaultZone: http://172.16.0.229:8761/eureka/
-      defaultZone: http://192.168.32.128:8761/eureka/
+      defaultZone: http://192.168.32.230:8761/eureka/
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
