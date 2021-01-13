@@ -1,0 +1,13 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://192.168.32.230:8761/eureka
+  instance:
+    prefer-ip-address: true
+    health-check-url-path: /actuator/health
+
+datasource:
+  url: jdbc:mysql://116.62.148.11:3306/uaa_server?useUnicode=true&characterEncoding=utf-8
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  username: root
+  password: abc123

@@ -1,5 +1,6 @@
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
+import oauth2.common.AuthEnum;
 import oauth2.utils.CommonResult;
 import org.junit.Test;
 
@@ -24,6 +25,11 @@ public class JsonTest {
         CommonResult<String> success = CommonResult.success("12345");
         Map<String, Object> stringObjectMap = BeanUtil.beanToMap(success);
         System.out.println(stringObjectMap);
+    }
+
+    @Test
+    public void test2(){
+        String description = AuthEnum.HIFUN.getDescription();
     }
 
 }

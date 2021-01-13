@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @Description:
  * @Author: CJ
@@ -45,9 +47,10 @@ public class ExceptionAdapter {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.OK)
-    public CommonResult<String> exception(Exception e) {
+    public CommonResult<String> exception(Exception e, HttpServletRequest request) {
         String message = e.getMessage();
         e.printStackTrace();
+        request.setAttribute("javax.servlet.error.status_code",500);
 
         return CommonResult.error(message);
     }
