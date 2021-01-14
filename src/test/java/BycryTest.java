@@ -15,9 +15,12 @@ public class BycryTest {
         String password2 = bCryptPasswordEncoder.encode("d34c7b26ef614456aa06ba4acfe0b589");
         String password3 = bCryptPasswordEncoder.encode("b0fca803239140a3a679b4eb1808da60");
 
+        String password4 = bCryptPasswordEncoder.encode("abc123");
+
         System.out.println(password1);
         System.out.println(password2);
         System.out.println(password3);
+        System.out.println(password4);
     }
 
 }
